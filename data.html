@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Promo Data</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        button {
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #c82333;
+        }
+        .edit-btn {
+            background-color: #007bff;
+        }
+        .edit-btn:hover {
+            background-color: #0056b3;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"], input[type="date"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-actions {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .form-actions button {
+            padding: 10px 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Manage Promo Data</h1>
+
+        <!-- Edit Form -->
+        <div id="editForm" style="display: none;">
+            <h2>Edit Promo</h2>
+            <div class="form-group">
+                <label for="editModel">Model</label>
+                <input type="text" id="editModel" readonly>
+            </div>
+            <div class="form-group">
+                <label for="editStorage">Storage (GB)</label>
+                <input type="number" id="editStorage">
+            </div>
+            <div class="form-group">
+                <label for="editRcp">RCP</label>
+                <input type="number" id="editRcp">
+            </div>
+            <div class="form-group">
+                <label for="editPromoPrice">Promo Price</label>
+                <input type="number" id="editPromoPrice">
+            </div>
+            <div class="form-group">
+                <label for="editPromoInfo">Additional Info</label>
+                <input type="text" id="editPromoInfo">
+            </div>
+            <div class="form-group">
+                <label for="editStartDate">Start Date</label>
+                <input type="date" id="editStartDate">
+            </div>
+            <div class="form-group">
+                <label for="editEndDate">End Date</label>
+                <input type="date" id="editEndDate">
+            </div>
+            <div class="form-actions">
+                <button onclick="saveEdit()">Save Changes</button>
+                <button onclick="cancelEdit()">Cancel</button>
+            </div>
+        </div>
+
+        <!-- Promo Table -->
+        <table id="promoTable">
+            <thead>
+                <tr>
+                    <th>Model</th>
+                    <th>Storage (GB)</th>
+                    <th>RCP</th>
+                    <th>Promo Price</th>
+                    <th>Additional Info</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="promoTableBody">
+                <!-- Data will be populated here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+    let editIndex = null;
+
+    function displayPromos() {
+        const promos = JSON.parse(localStorage.getItem('promos')) || [];
+
+        const tableBody = document.getElementById('promoTableBody');
+        tableBody.innerHTML = ''; // Clear existing rows
+
+        promos.forEach((promo, index) => {
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td>${promo.model}</td>
+                <td>${promo.storage}GB</td>
+                <td>RM${promo.rcp}</td>
+                <td>RM${promo.promoPrice}</td>
+                <td>${promo.promoInfo}</td>
+                <td>${promo.startDate} - ${promo.endDate}</td>
+                <td>
+                    <div class="actions">
+                        <button class="edit-btn" onclick="editPromo(${index})">Edit</button>
+                        <button onclick="deletePromo(${index})">Delete</button>
+                    </div>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    function editPromo(index) {
+        const promos = JSON.parse(localStorage.getItem('promos')) || [];
+        const promo = promos[index];
+
+        // Populate the form with existing data
+        document.getElementById('editModel').value = promo.model;
+        document.getElementById('editStorage').value = promo.storage;
+        document.getElementById('editRcp').value = promo.rcp;
+        document.getElementById('editPromoPrice').value = promo.promoPrice;
+        document.getElementById('editPromoInfo').value = promo.promoInfo;
+        document.getElementById('editStartDate').value = promo.startDate;
+        document.getElementById('editEndDate').value = promo.endDate;
+
+        editIndex = index; // Store the index of the promo being edited
+
+        document.getElementById('editForm').style.display = 'block'; // Show the edit form
+    }
+
+    function saveEdit() {
+        const promos = JSON.parse(localStorage.getItem('promos')) || [];
+
+        // Get the updated values from the form
+        const updatedPromo = {
+            model: document.getElementById('editModel').value,
+            storage: document.getElementById('editStorage').value,
+            rcp: document.getElementById('editRcp').value,
+            promoPrice: document.getElementById('editPromoPrice').value,
+            promoInfo: document.getElementById('editPromoInfo').value,
+            startDate: document.getElementById('editStartDate').value,
+            endDate: document.getElementById('editEndDate').value
+        };
+
+        // Update the promo in the array
+        promos[editIndex] = updatedPromo;
+
+        // Save the updated promos array back to localStorage
+        localStorage.setItem('promos', JSON.stringify(promos));
+
+        // Hide the edit form and refresh the table
+        document.getElementById('editForm').style.display = 'none';
+        displayPromos();
+    }
+
+    function cancelEdit() {
+        document.getElementById('editForm').style.display = 'none'; // Hide the edit form
+    }
+
+    function deletePromo(index) {
+        let promos = JSON.parse(localStorage.getItem('promos')) || [];
+        promos.splice(index, 1); // Remove the promo at the given index
+        localStorage.setItem('promos', JSON.stringify(promos)); // Save the updated list
+        displayPromos(); // Refresh the table
+    }
+
+    document.addEventListener('DOMContentLoaded', displayPromos);
+    </script>
+
+</body>
+</html>

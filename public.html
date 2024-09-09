@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Promo</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        select, button {
+            font-size: 18px;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+        select {
+            width: 100%;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .promo-details {
+            margin-top: 20px;
+        }
+        .promo-details p {
+            margin: 5px 0;
+        }
+        .promo-price {
+            font-size: 28px; /* Increased font size for promo price */
+            font-weight: bold;
+            color: #dc3545;
+        }
+        .promo-rcp {
+            font-size: 16px; /* Smaller font size for RCP */
+            color: #333;
+        }
+        .promo-dates {
+            font-size: 16px;
+            color: #333;
+        }
+        .footer-note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 20px;
+            text-align: center;
+        }
+        p.refresh-note {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>View Promo</h1>
+        <select id="modelSelect" onchange="updateStorageOptions()">
+            <option value="">Select a model</option>
+            <!-- Options will be populated here -->
+        </select>
+        <select id="storageSelect">
+            <option value="">Select a storage option</option>
+            <!-- Options will be populated here -->
+        </select>
+        <button onclick="viewPromo()">View Promo</button>
+        <div id="promoDetails" class="promo-details">
+            <!-- Promo details will be displayed here -->
+        </div>
+        <div class="footer-note">
+            *for PlusOne® member only, terms & conditions apply
+        </div>
+        <p class="refresh-note">
+            Please <a href="#" onclick="location.reload();">refresh</a> the page to get updated data.
+        </p>
+    </div>
+
+    <script>
+        function populateModels() {
+            const modelSelect = document.getElementById('modelSelect');
+            const promos = JSON.parse(localStorage.getItem('promos')) || [];
+            const uniqueModels = [...new Set(promos.map(promo => promo.model))];
+
+            modelSelect.innerHTML = '<option value="">Select a model</option>';
+            uniqueModels.forEach(model => {
+                const option = document.createElement('option');
+                option.value = model;
+                option.textContent = model;
+                modelSelect.appendChild(option);
+            });
+        }
+
+        function updateStorageOptions() {
+            const modelSelect = document.getElementById('modelSelect');
+            const storageSelect = document.getElementById('storageSelect');
+            const selectedModel = modelSelect.value;
+
+            storageSelect.innerHTML = '<option value="">Select a storage option</option>';
+
+            if (selectedModel) {
+                const promos = JSON.parse(localStorage.getItem('promos')) || [];
+                const filteredPromos = promos.filter(promo => promo.model === selectedModel);
+
+                filteredPromos.forEach(promo => {
+                    const option = document.createElement('option');
+                    option.value = promo.storage;
+                    option.textContent = `${promo.storage}GB`;
+                    storageSelect.appendChild(option);
+                });
+            }
+        }
+
+        function viewPromo() {
+            const modelSelect = document.getElementById('modelSelect');
+            const storageSelect = document.getElementById('storageSelect');
+            const selectedModel = modelSelect.value;
+            const selectedStorage = storageSelect.value;
+
+            const promos = JSON.parse(localStorage.getItem('promos')) || [];
+            const promo = promos.find(p => p.model === selectedModel && p.storage == selectedStorage);
+
+            const promoDetails = document.getElementById('promoDetails');
+            if (promo) {
+                const startDate = new Date(promo.startDate);
+                const endDate = new Date(promo.endDate);
+                const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                const formattedStartDate = startDate.toLocaleDateString('en-US', options);
+                const formattedEndDate = endDate.toLocaleDateString('en-US', options);
+                
+                promoDetails.innerHTML = `
+                    <h2>Promo Details</h2>
+                    <p><strong>Model:</strong> ${promo.model}</p>
+                    <p><strong>Storage:</strong> ${promo.storage}GB</p>
+                    <p class="promo-price"><strong>Promo Price:</strong> RM${promo.promoPrice}</p>
+                    <p class="promo-rcp"><strong>RCP:</strong> ${promo.rcp}</p>
+                    <p><strong>Additional Info:</strong> ${promo.promoInfo}</p>
+                    <p class="promo-dates"><strong>Promo Dates:</strong> ${formattedStartDate} - ${formattedEndDate}</p>
+                `;
+            } else {
+                promoDetails.innerHTML = '<p>No promo details found for the selected options.</p>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateModels();
+            updateStorageOptions();
+        });
+    </script>
+</body>
+</html>

@@ -126,29 +126,32 @@
     }
 
     // Function to save the promo data to GitHub
-    async function savePromoData(promoData) {
-        const existingData = await fetchPromoData();
-        const updatedData = [...existingData, promoData];
+async function savePromoData(promoData) {
+    const existingData = await fetchPromoData();
+    const updatedData = [...existingData, promoData];
 
-        const response = await fetch(`https://api.github.com/repos/${repo}/contents/promos.json`, {
-            method: "PUT",
-            headers: {
-                Authorization: `token ${token}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                message: "Updated promo data",
-                content: btoa(JSON.stringify(updatedData)),
-                sha: await getSha("promos.json")
-            })
-        });
+    const response = await fetch(`https://api.github.com/repos/${repo}/contents/promos.json`, {
+        method: "PUT",
+        headers: {
+            Authorization: `token ${token}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            message: "Updated promo data",
+            content: btoa(JSON.stringify(updatedData)),
+            sha: await getSha("promos.json")
+        })
+    });
 
-        if (response.ok) {
-            alert("Promo saved successfully!");
-        } else {
-            alert("Error saving promo.");
-        }
+    console.log("GitHub response:", response); // Log the response to check if saving is successful
+
+    if (response.ok) {
+        alert("Promo saved successfully!");
+    } else {
+        alert("Error saving promo.");
     }
+}
+
 
     // Helper function to get the latest file SHA
     async function getSha(filename) {

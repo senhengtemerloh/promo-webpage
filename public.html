@@ -52,12 +52,12 @@
             margin: 5px 0;
         }
         .promo-price {
-            font-size: 28px; /* Increased font size for promo price */
+            font-size: 28px;
             font-weight: bold;
             color: #dc3545;
         }
         .promo-rcp {
-            font-size: 16px; /* Smaller font size for RCP */
+            font-size: 16px;
             color: #333;
         }
         .promo-dates {
@@ -82,16 +82,12 @@
         <h1>View Promo</h1>
         <select id="modelSelect" onchange="updateStorageOptions()">
             <option value="">Select a model</option>
-            <!-- Options will be populated here -->
         </select>
         <select id="storageSelect">
             <option value="">Select a storage option</option>
-            <!-- Options will be populated here -->
         </select>
         <button onclick="viewPromo()">View Promo</button>
-        <div id="promoDetails" class="promo-details">
-            <!-- Promo details will be displayed here -->
-        </div>
+        <div id="promoDetails" class="promo-details"></div>
         <div class="footer-note">
             *for PlusOne® member only, terms & conditions apply
         </div>
@@ -100,72 +96,94 @@
         </p>
     </div>
 
-<script>
-    const repo = "senhengtemerloh/promo-webpage"; // Replace with your GitHub repo
-    const branch = "main"; // Replace with your main branch
-    const token = "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"; // Use a GitHub personal access token (PAT)
+    <script>
+        const repo = "senhengtemerloh/promo-webpage";
+        const branch = "main";
+        const token = "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"; // Test Token
 
-    // Function to fetch the promo data from GitHub
-    async function fetchPromoData() {
-        const response = await fetch(`https://api.github.com/repos/${repo}/contents/promos.json?ref=${branch}`, {
-            headers: {
-                Authorization: `token ${token}`
-            }
-        });
-        const data = await response.json();
-        const content = atob(data.content);
-        return JSON.parse(content);
-    }
-
-    async function populateModels() {
-        const modelSelect = document.getElementById("modelSelect");
-        const promos = await fetchPromoData();
-        const uniqueModels = [...new Set(promos.map(promo => promo.model))];
-
-        modelSelect.innerHTML = '<option value="">Select a model</option>';
-        uniqueModels.forEach(model => {
-            const option = document.createElement("option");
-            option.value = model;
-            option.textContent = model;
-            modelSelect.appendChild(option);
-        });
-    }
-
-    async function viewPromo() {
-        const modelSelect = document.getElementById("modelSelect");
-        const storageSelect = document.getElementById("storageSelect");
-        const selectedModel = modelSelect.value;
-        const selectedStorage = storageSelect.value;
-
-        const promos = await fetchPromoData();
-        const promo = promos.find(p => p.model === selectedModel && p.storage == selectedStorage);
-
-        const promoDetails = document.getElementById("promoDetails");
-        if (promo) {
-            const startDate = new Date(promo.startDate);
-            const endDate = new Date(promo.endDate);
-            const options = { day: "numeric", month: "long", year: "numeric" };
-            const formattedStartDate = startDate.toLocaleDateString("en-US", options);
-            const formattedEndDate = endDate.toLocaleDateString("en-US", options);
-
-            promoDetails.innerHTML = `
-                <h2>Promo Details</h2>
-                <p><strong>Model:</strong> ${promo.model}</p>
-                <p><strong>Storage:</strong> ${promo.storage}GB</p>
-                <p class="promo-price"><strong>Promo Price:</strong> RM${promo.promoPrice}</p>
-                <p class="promo-rcp"><strong>RCP:</strong> ${promo.rcp}</p>
-                <p><strong>Additional Info:</strong> ${promo.promoInfo}</p>
-                <p class="promo-dates"><strong>Promo Dates:</strong> ${formattedStartDate} - ${formattedEndDate}</p>
-            `;
-        } else {
-            promoDetails.innerHTML = "<p>No promo details found for the selected options.</p>";
+        // Function to fetch the promo data from GitHub
+        async function fetchPromoData() {
+            const response = await fetch(`https://api.github.com/repos/${repo}/contents/promos.json?ref=${branch}`, {
+                headers: {
+                    Authorization: `token ${token}`
+                }
+            });
+            const data = await response.json();
+            const content = atob(data.content);
+            return JSON.parse(content);
         }
-    }
 
-    document.addEventListener("DOMContentLoaded", () => {
-        populateModels();
-    });
-</script>
+        // Populate model options
+        async function populateModels() {
+            const modelSelect = document.getElementById('modelSelect');
+            const promos = await fetchPromoData();
+            const uniqueModels = [...new Set(promos.map(promo => promo.model))];
 
+            modelSelect.innerHTML = '<option value="">Select a model</option>';
+            uniqueModels.forEach(model => {
+                const option = document.createElement('option');
+                option.value = model;
+                option.textContent = model;
+                modelSelect.appendChild(option);
+            });
+        }
+
+        // Update storage options based on selected model
+        async function updateStorageOptions() {
+            const modelSelect = document.getElementById('modelSelect');
+            const storageSelect = document.getElementById('storageSelect');
+            const selectedModel = modelSelect.value;
+
+            storageSelect.innerHTML = '<option value="">Select a storage option</option>';
+
+            if (selectedModel) {
+                const promos = await fetchPromoData();
+                const filteredPromos = promos.filter(promo => promo.model === selectedModel);
+
+                filteredPromos.forEach(promo => {
+                    const option = document.createElement('option');
+                    option.value = promo.storage;
+                    option.textContent = `${promo.storage}GB`;
+                    storageSelect.appendChild(option);
+                });
+            }
+        }
+
+        // Display promo details
+        async function viewPromo() {
+            const modelSelect = document.getElementById('modelSelect');
+            const storageSelect = document.getElementById('storageSelect');
+            const selectedModel = modelSelect.value;
+            const selectedStorage = storageSelect.value;
+
+            const promos = await fetchPromoData();
+            const promo = promos.find(p => p.model === selectedModel && p.storage == selectedStorage);
+
+            const promoDetails = document.getElementById('promoDetails');
+            if (promo) {
+                const startDate = new Date(promo.startDate);
+                const endDate = new Date(promo.endDate);
+                const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                const formattedStartDate = startDate.toLocaleDateString('en-US', options);
+                const formattedEndDate = endDate.toLocaleDateString('en-US', options);
+
+                promoDetails.innerHTML = `
+                    <h2>Promo Details</h2>
+                    <p><strong>Model:</strong> ${promo.model}</p>
+                    <p><strong>Storage:</strong> ${promo.storage}GB</p>
+                    <p class="promo-price"><strong>Promo Price:</strong> RM${promo.promoPrice}</p>
+                    <p class="promo-rcp"><strong>RCP:</strong> ${promo.rcp}</p>
+                    <p><strong>Additional Info:</strong> ${promo.promoInfo}</p>
+                    <p class="promo-dates"><strong>Promo Dates:</strong> ${formattedStartDate} - ${formattedEndDate}</p>
+                `;
+            } else {
+                promoDetails.innerHTML = '<p>No promo details found for the selected options.</p>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateModels();
+        });
+    </script>
 </body>
 </html>

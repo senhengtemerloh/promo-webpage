@@ -111,78 +111,93 @@
 <script>
     const repo = "senhengtemerloh/promo-webpage";
     const branch = "main";
-    const token = "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"; // Test Token
+    const token = "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"; // New token
 
-    // Function to fetch the promo data from GitHub
+    // Fetch promo data from GitHub
     async function fetchPromoData() {
-        const response = await fetch(`https://api.github.com/repos/${repo}/contents/promos.json?ref=${branch}`, {
-            headers: {
-                Authorization: `token ${token}`
+        try {
+            const response = await fetch(`https://api.github.com/repos/${repo}/contents/promos.json?ref=${branch}`, {
+                headers: {
+                    Authorization: `token ${token}`
+                }
+            });
+            if (!response.ok) {
+                throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
             }
-        });
-        const data = await response.json();
-        const content = atob(data.content);
-        return JSON.parse(content);
-    }
-
-    // Function to save the promo data to GitHub
-async function savePromoData(promoData) {
-    const existingData = await fetchPromoData();
-    const updatedData = [...existingData, promoData];
-
-    const response = await fetch(`https://api.github.com/repos/${repo}/contents/promos.json`, {
-        method: "PUT",
-        headers: {
-            Authorization: `token ${token}`,
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            message: "Updated promo data",
-            content: btoa(JSON.stringify(updatedData)),
-            sha: await getSha("promos.json")
-        })
-    });
-
-    console.log("GitHub response:", response); // Log the response to check if saving is successful
-
-    if (response.ok) {
-        alert("Promo saved successfully!");
-    } else {
-        alert("Error saving promo.");
-    }
-}
-
-
-    // Helper function to get the latest file SHA
-async function getSha(filename) {
-    const response = await fetch(`https://api.github.com/repos/${repo}/contents/${filename}?ref=${branch}`, {
-        headers: {
-            Authorization: `token ${token}`
+            const data = await response.json();
+            const content = atob(data.content);
+            return JSON.parse(content);
+        } catch (error) {
+            console.error("Error fetching promo data:", error);
         }
-    });
-    const data = await response.json();
-    console.log("SHA:", data.sha); // Check if SHA is being retrieved
-    return data.sha;
-}
+    }
 
+    // Save promo data to GitHub
+    async function savePromoData(promoData) {
+        try {
+            const existingData = await fetchPromoData();
+            const updatedData = [...existingData, promoData];
 
-function savePromo() {
-    const promoData = {
-        model: document.getElementById("model").value,
-        storage: document.getElementById("storage").value,
-        rcp: document.getElementById("rcp").value,
-        promoPrice: document.getElementById("promoPrice").value,
-        promoInfo: document.getElementById("promoInfo").value,
-        startDate: document.getElementById("startDate").value,
-        endDate: document.getElementById("endDate").value
-    };
+            const response = await fetch(`https://api.github.com/repos/${repo}/contents/promos.json`, {
+                method: "PUT",
+                headers: {
+                    Authorization: `token ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    message: "Updated promo data",
+                    content: btoa(JSON.stringify(updatedData)),
+                    sha: await getSha("promos.json")
+                })
+            });
 
-    console.log("Promo data to save:", promoData); // Log the data to check if it's being collected
+            if (!response.ok) {
+                throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+            }
 
-    savePromoData(promoData);
-}
+            alert("Promo saved successfully!");
+        } catch (error) {
+            console.error("Error saving promo data:", error);
+            alert("Error saving promo data.");
+        }
+    }
 
+    // Get the latest SHA for promos.json
+    async function getSha(filename) {
+        try {
+            const response = await fetch(`https://api.github.com/repos/${repo}/contents/${filename}?ref=${branch}`, {
+                headers: {
+                    Authorization: `token ${token}`
+                }
+            });
+            if (!response.ok) {
+                throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+            }
+            const data = await response.json();
+            console.log("SHA:", data.sha);
+            return data.sha;
+        } catch (error) {
+            console.error("Error fetching SHA:", error);
+        }
+    }
+
+    function savePromo() {
+        const promoData = {
+            model: document.getElementById("model").value,
+            storage: document.getElementById("storage").value,
+            rcp: document.getElementById("rcp").value,
+            promoPrice: document.getElementById("promoPrice").value,
+            promoInfo: document.getElementById("promoInfo").value,
+            startDate: document.getElementById("startDate").value,
+            endDate: document.getElementById("endDate").value
+        };
+
+        console.log("Promo data to save:", promoData); // Log the data for debug purposes
+
+        savePromoData(promoData);
+    }
 </script>
+
 
 </body>
 </html>

@@ -154,15 +154,17 @@ async function savePromoData(promoData) {
 
 
     // Helper function to get the latest file SHA
-    async function getSha(filename) {
-        const response = await fetch(`https://api.github.com/repos/${repo}/contents/${filename}?ref=${branch}`, {
-            headers: {
-                Authorization: `token ${token}`
-            }
-        });
-        const data = await response.json();
-        return data.sha;
-    }
+async function getSha(filename) {
+    const response = await fetch(`https://api.github.com/repos/${repo}/contents/${filename}?ref=${branch}`, {
+        headers: {
+            Authorization: `token ${token}`
+        }
+    });
+    const data = await response.json();
+    console.log("SHA:", data.sha); // Check if SHA is being retrieved
+    return data.sha;
+}
+
 
 function savePromo() {
     const promoData = {

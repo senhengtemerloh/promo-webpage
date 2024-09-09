@@ -161,19 +161,22 @@
         return data.sha;
     }
 
-    function savePromo() {
-        const promoData = {
-            model: document.getElementById("model").value,
-            storage: document.getElementById("storage").value,
-            rcp: document.getElementById("rcp").value,
-            promoPrice: document.getElementById("promoPrice").value,
-            promoInfo: document.getElementById("promoInfo").value,
-            startDate: document.getElementById("startDate").value,
-            endDate: document.getElementById("endDate").value
-        };
+function savePromo() {
+    const promoData = {
+        model: document.getElementById("model").value,
+        storage: document.getElementById("storage").value,
+        rcp: document.getElementById("rcp").value,
+        promoPrice: document.getElementById("promoPrice").value,
+        promoInfo: document.getElementById("promoInfo").value,
+        startDate: document.getElementById("startDate").value,
+        endDate: document.getElementById("endDate").value
+    };
 
-        savePromoData(promoData);
-    }
+    console.log("Promo data to save:", promoData); // Log the data to check if it's being collected
+
+    savePromoData(promoData);
+}
+
 </script>
 
 </body>

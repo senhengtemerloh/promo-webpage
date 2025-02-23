@@ -8,6 +8,8 @@
   <style>
     :root {
       --shadow-color: 0deg 0% 63%;
+      --gold: #FFD700;
+      --rich-gold: #D4AF37;
     }
     
     body {
@@ -80,6 +82,7 @@
       text-shadow: 0 1px 2px rgba(0,0,0,0.2);
       letter-spacing: 0.05em;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
     }
     
     .product-details {
@@ -143,49 +146,48 @@
       position: absolute;
       bottom: 15px;
       right: 15px;
-      background: linear-gradient(45deg, #ffd32a 0%, #fbc531 100%);
-      border-radius: 8px;
-      padding: 10px 15px;
+      background: linear-gradient(45deg, var(--rich-gold) 0%, var(--gold) 100%);
+      border-radius: 12px;
+      padding: 12px 15px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       z-index: 2;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+    
+    .scoin-icon {
+      width: 40px;
+      height: 40px;
+      background-image: url('https://seco.com.my/wp-content/uploads/2024/03/No-earn-limits-1-300x259.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
     }
     
     .scoin-content {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start;
     }
     
     .scoin-value {
-      font-size: 18px;
+      font-size: 24px;
       font-weight: 800;
       color: #2d3436;
       line-height: 1;
       white-space: nowrap;
+      text-shadow: 0 2px 2px rgba(0,0,0,0.1);
     }
     
     .scoin-label {
-      font-size: 10px;
-      font-weight: 700;
-      color: rgba(0,0,0,0.8);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-    
-    .scoin-icon {
-      width: 20px;
-      height: 20px;
-      background: white;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
       font-size: 12px;
-      color: #2d3436;
+      font-weight: 700;
+      color: rgba(0,0,0,0.9);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 2px;
     }
   </style>
 </head>
@@ -250,10 +252,10 @@
         const scoinBadge = document.createElement('div');
         scoinBadge.className = 'scoin-badge';
         scoinBadge.innerHTML = `
-          <div class="scoin-icon">S</div>
+          <div class="scoin-icon"></div>
           <div class="scoin-content">
             <div class="scoin-value">${formatScoin(product.SCOIN)}</div>
-            <div class="scoin-label">Cashback</div>
+            <div class="scoin-label">S-Coin Cashback</div>
           </div>
         `;
         imageContainer.appendChild(scoinBadge);

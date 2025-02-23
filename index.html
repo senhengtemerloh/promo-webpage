@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Premium Product Catalog</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --shadow-color: 0deg 0% 63%;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #fafafa;
+    }
+    
+    h1 {
+      text-align: center;
+      margin: 2rem 0;
+      color: #2d3436;
+      font-size: 2.5rem;
+      letter-spacing: -0.05em;
+    }
+    
+    #product-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+    
+    .product-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.34),
+        1.5px 2.9px 3.7px -0.4px hsl(var(--shadow-color) / 0.34),
+        2.7px 5.4px 6.8px -0.7px hsl(var(--shadow-color) / 0.34),
+        4.5px 8.9px 11.2px -1.1px hsl(var(--shadow-color) / 0.34),
+        7.1px 14.3px 18px -1.4px hsl(var(--shadow-color) / 0.34);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+    }
+    
+    .image-container {
+      position: relative;
+      padding-top: 100%;
+      background: linear-gradient(135deg, #f5f6fa 0%, #fafafa 100%);
+    }
+    
+    .product-image {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      height: 80%;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+    
+    .brand-label {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      padding: 8px 20px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      letter-spacing: 0.05em;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .product-details {
+      padding: 20px;
+      background: white;
+    }
+    
+    .product-title {
+      margin: 0 0 8px;
+      font-size: 17px;
+      font-weight: 600;
+      color: #2d3436;
+      line-height: 1.4;
+    }
+    
+    .product-model {
+      margin: 0 0 12px;
+      font-size: 14px;
+      color: #636e72;
+      font-weight: 500;
+    }
+    
+    .original-price {
+      margin: 0 0 15px;
+      font-size: 14px;
+      color: #b2bec3;
+      text-decoration: line-through;
+      font-weight: 500;
+    }
+    
+    .price-badge-container {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    
+    .member-price {
+      flex: 1;
+      background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
+      border-radius: 12px;
+      padding: 14px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-width: 160px;
+    }
+    
+    .member-price .price-label {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .member-price .price-value {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    
+    .scoin-badge {
+      display: flex;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid #ffeaa7;
+      position: relative;
+    }
+    
+    .scoin-badge::before {
+      content: "";
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 30px 30px 0;
+      border-color: transparent #ffd32a transparent transparent;
+    }
+    
+    .scoin-badge .badge-left {
+      background: linear-gradient(45deg, #ffd32a 0%, #fbc531 100%);
+      width: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    
+    .scoin-badge .badge-left span {
+      transform: rotate(-90deg);
+      color: white;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    
+    .scoin-badge .badge-right {
+      padding: 12px 16px;
+      text-align: center;
+    }
+    
+    .scoin-badge .scoin-value {
+      font-size: 18px;
+      font-weight: 800;
+      color: #2d3436;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+    
+    .scoin-badge .scoin-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #636e72;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <h1>Exclusive Member Pricing</h1>
+  <div id="product-container"></div>
+
+  <script>
+    const brandColors = {
+      'electrolux': '#011E41',
+      'haier': '#0C5CA8',
+      'lg': '#A50034',
+      'philips': '#0B5ED7',
+      'panasonic': '#0041C0',
+      'robam': '#017BC8',
+      'samsung': '#1428A0',
+      'sharp': '#E6000D',
+      'sony': '#000000',
+      'tcl': '#E64C3D',
+      'tefal': '#DA0113',
+      'toshiba': '#CC0000'
+    };
+
+    function formatPrice(value) {
+      return 'RM' + Number(value).toLocaleString('en-MY', { maximumFractionDigits: 0 });
+    }
+
+    function formatScoin(value) {
+      if (typeof value === 'number') {
+        return value < 1 ? `${(value * 100).toFixed(0)}%` : value.toFixed(0);
+      }
+      return value.includes('%') ? value : `${value}%`;
+    }
+
+    function renderProducts(products) {
+      const container = document.getElementById('product-container');
+      container.innerHTML = '';
+      
+      products.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+
+        // Image Container
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'image-container';
+        
+        const productImage = document.createElement('img');
+        productImage.className = 'product-image';
+        productImage.src = product.URL;
+        productImage.alt = product.DESC;
+        imageContainer.appendChild(productImage);
+        
+        // Brand Label
+        const brandLabel = document.createElement('div');
+        brandLabel.className = 'brand-label';
+        const brandKey = product.BRAND.toLowerCase();
+        brandLabel.textContent = product.BRAND.toUpperCase();
+        brandLabel.style.backgroundColor = brandColors[brandKey] || '#333';
+        imageContainer.appendChild(brandLabel);
+        
+        card.appendChild(imageContainer);
+        
+        // Product Details
+        const details = document.createElement('div');
+        details.className = 'product-details';
+        
+        const title = document.createElement('h3');
+        title.className = 'product-title';
+        title.textContent = product.DESC;
+        details.appendChild(title);
+        
+        const model = document.createElement('p');
+        model.className = 'product-model';
+        model.textContent = product.MODEL;
+        details.appendChild(model);
+        
+        const origPrice = document.createElement('p');
+        origPrice.className = 'original-price';
+        origPrice.textContent = `Original: ${formatPrice(product.RCP)}`;
+        details.appendChild(origPrice);
+        
+        // Price Badges
+        const priceBadgeContainer = document.createElement('div');
+        priceBadgeContainer.className = 'price-badge-container';
+        
+        // Member Price
+        const memberPrice = document.createElement('div');
+        memberPrice.className = 'member-price';
+        memberPrice.innerHTML = `
+          <span class="price-label">MEMBER PRICE</span>
+          <span class="price-value">${formatPrice(product.BLK)}</span>
+        `;
+        priceBadgeContainer.appendChild(memberPrice);
+        
+        // S-Coin Badge
+        const scoinBadge = document.createElement('div');
+        scoinBadge.className = 'scoin-badge';
+        scoinBadge.innerHTML = `
+          <div class="badge-left">
+            <span>EARN</span>
+          </div>
+          <div class="badge-right">
+            <div class="scoin-value">${formatScoin(product.SCOIN)}</div>
+            <div class="scoin-label">S-Coin Cashback</div>
+          </div>
+        `;
+        priceBadgeContainer.appendChild(scoinBadge);
+        details.appendChild(priceBadgeContainer);
+        
+        card.appendChild(details);
+        container.appendChild(card);
+      });
+    }
+
+    fetch('pahang.xlsx')
+      .then(response => response.arrayBuffer())
+      .then(data => {
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        const products = XLSX.utils.sheet_to_json(worksheet);
+        renderProducts(products);
+      })
+      .catch(error => {
+        console.error('Error loading XLSX file:', error);
+      });
+  </script>
+</body>
+</html>

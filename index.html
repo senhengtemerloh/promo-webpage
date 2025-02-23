@@ -1,317 +1,336 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Premium Product Catalog</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <style>
-    :root {
-      --shadow-color: 0deg 0% 63%;
-      --gold: #FFD700;
-      --rich-gold: #D4AF37;
-    }
-    
-    body {
-      font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #fafafa;
-    }
-    
-    h1 {
-      text-align: center;
-      margin: 2rem 0;
-      color: #2d3436;
-      font-size: 2.5rem;
-      letter-spacing: -0.05em;
-    }
-    
-    #product-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 30px;
-      max-width: 1440px;
-      margin: 0 auto;
-    }
-    
-    .product-card {
-      background: white;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0.3px 0.5px 0.7px hsl(var(--shadow-color) / 0.34),
-        1.5px 2.9px 3.7px -0.4px hsl(var(--shadow-color) / 0.34),
-        2.7px 5.4px 6.8px -0.7px hsl(var(--shadow-color) / 0.34),
-        4.5px 8.9px 11.2px -1.1px hsl(var(--shadow-color) / 0.34),
-        7.1px 14.3px 18px -1.4px hsl(var(--shadow-color) / 0.34);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    
-    .product-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.1);
-    }
-    
-    .image-container {
-      position: relative;
-      padding-top: 100%;
-      background: linear-gradient(135deg, #f5f6fa 0%, #fafafa 100%);
-      margin-bottom: 15px;
-    }
-    
-    .product-image {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 80%;
-      height: 80%;
-      object-fit: contain;
-      mix-blend-mode: multiply;
-    }
-    
-    .brand-label {
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      padding: 8px 20px;
-      border-radius: 30px;
-      font-size: 13px;
-      font-weight: 700;
-      color: white;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-      letter-spacing: 0.05em;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      border: 2px solid rgba(255,255,255,0.2);
-    }
-    
-    .product-details {
-      padding: 20px;
-      background: white;
-    }
-    
-    .product-title {
-      margin: 0 0 8px;
-      font-size: 17px;
-      font-weight: 600;
-      color: #2d3436;
-      line-height: 1.4;
-    }
-    
-    .product-model {
-      margin: 0 0 12px;
-      font-size: 14px;
-      color: #636e72;
-      font-weight: 500;
-    }
-    
-    .original-price {
-      margin: 0 0 15px;
-      font-size: 14px;
-      color: #b2bec3;
-      text-decoration: line-through;
-      font-weight: 500;
-    }
-    
-    .price-badge-container {
-      display: flex;
-      gap: 15px;
-      align-items: center;
-    }
-    
-    .member-price {
-      flex: 1;
-      background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
-      border-radius: 12px;
-      padding: 14px;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      min-width: 160px;
-    }
-    
-    .member-price .price-label {
-      font-size: 14px;
-      font-weight: 600;
-    }
-    
-    .member-price .price-value {
-      font-size: 20px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-    
-    .scoin-badge {
-      position: absolute;
-      bottom: 15px;
-      right: 15px;
-      background: linear-gradient(45deg, var(--rich-gold) 0%, var(--gold) 100%);
-      border-radius: 12px;
-      padding: 12px 15px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      z-index: 2;
-      border: 2px solid rgba(255,255,255,0.3);
-    }
-    
-    .scoin-icon {
-      width: 40px;
-      height: 40px;
-      background-image: url('https://seco.com.my/wp-content/uploads/2024/03/No-earn-limits-1-300x259.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-    }
-    
-    .scoin-content {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    
-    .scoin-value {
-      font-size: 24px;
-      font-weight: 800;
-      color: #2d3436;
-      line-height: 1;
-      white-space: nowrap;
-      text-shadow: 0 2px 2px rgba(0,0,0,0.1);
-    }
-    
-    .scoin-label {
-      font-size: 12px;
-      font-weight: 700;
-      color: rgba(0,0,0,0.9);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-top: 2px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElectroLux Hub | Exclusive Member Benefits</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --primary: #0F172A;
+            --accent: #3B82F6;
+            --gold: #F59E0B;
+            --success: #10B981;
+            --dark: #1E293B;
+            --light: #F8FAFC;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--primary);
+            color: var(--light);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+            padding: 4rem 1rem;
+            background: linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(15,23,42,1) 100%);
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #3B82F6, #60A5FA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: #94A3B8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .product-card {
+            background: var(--dark);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .media-wrapper {
+            position: relative;
+            padding-top: 100%;
+            background: #0F172A;
+        }
+
+        .product-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+            mix-blend-mode: luminosity;
+            transition: mix-blend-mode 0.3s ease;
+        }
+
+        .product-card:hover .product-image {
+            mix-blend-mode: normal;
+        }
+
+        .brand-tag {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .brand-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .product-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--light);
+        }
+
+        .product-model {
+            color: #94A3B8;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .price-panel {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            color: #64748B;
+            font-size: 0.9rem;
+        }
+
+        .member-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .s-coin-badge {
+            position: absolute;
+            top: -25px;
+            right: 1.5rem;
+            background: linear-gradient(45deg, #F59E0B, #FCD34D);
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 4px 15px rgba(245,158,11,0.3);
+        }
+
+        .s-coin-badge img {
+            width: 28px;
+            height: 28px;
+        }
+
+        .s-coin-value {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .s-coin-label {
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .currency {
+            font-size: 0.8em;
+            color: #94A3B8;
+        }
+
+        .benefits-tag {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            padding: 0.5rem 2rem;
+            border-radius: 2rem 2rem 0 0;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 <body>
-  <h1>Exclusive Member Pricing</h1>
-  <div id="product-container"></div>
+    <div class="container">
+        <header class="header">
+            <h1>Member Exclusive Pricing</h1>
+            <p>Unlock special discounts and earn S-Coins with every purchase</p>
+        </header>
 
-  <script>
-    const brandColors = {
-      'electrolux': '#011E41',
-      'haier': '#0C5CA8',
-      'lg': '#A50034',
-      'philips': '#0B5ED7',
-      'panasonic': '#0041C0',
-      'robam': '#017BC8',
-      'samsung': '#1428A0',
-      'sharp': '#E6000D',
-      'sony': '#000000',
-      'tcl': '#E64C3D',
-      'tefal': '#DA0113',
-      'toshiba': '#CC0000'
-    };
+        <div class="grid" id="product-container"></div>
+    </div>
 
-    function formatPrice(value) {
-      return 'RM' + Number(value).toLocaleString('en-MY', { maximumFractionDigits: 0 });
-    }
+    <script>
+        const brandColors = {
+            'electrolux': '#011E41',
+            'haier': '#0C5CA8',
+            'lg': '#A50034',
+            'philips': '#0B5ED7',
+            'panasonic': '#0041C0',
+            'robam': '#017BC8',
+            'samsung': '#1428A0',
+            'sharp': '#E6000D',
+            'sony': '#000000',
+            'tcl': '#E64C3D',
+            'tefal': '#DA0113',
+            'toshiba': '#CC0000'
+        };
 
-    function formatScoin(value) {
-      if (typeof value === 'number') {
-        return value < 1 ? `${(value * 100).toFixed(0)}%` : value.toFixed(0);
-      }
-      return value.includes('%') ? value : `${value}%`;
-    }
+        function formatPrice(value) {
+            return Number(value).toLocaleString('en-MY', { 
+                style: 'currency', 
+                currency: 'MYR',
+                maximumFractionDigits: 0
+            });
+        }
 
-    function renderProducts(products) {
-      const container = document.getElementById('product-container');
-      container.innerHTML = '';
-      
-      products.forEach(product => {
-        const card = document.createElement('div');
-        card.className = 'product-card';
+        function formatScoin(value) {
+            const numericValue = typeof value === 'string' ? parseFloat(value) : value;
+            return numericValue < 1 ? `${Math.round(numericValue * 100)}%` : numericValue.toFixed(0);
+        }
 
-        // Image Container
-        const imageContainer = document.createElement('div');
-        imageContainer.className = 'image-container';
-        
-        const productImage = document.createElement('img');
-        productImage.className = 'product-image';
-        productImage.src = product.URL;
-        productImage.alt = product.DESC;
-        imageContainer.appendChild(productImage);
-        
-        // Brand Label
-        const brandLabel = document.createElement('div');
-        brandLabel.className = 'brand-label';
-        const brandKey = product.BRAND.toLowerCase();
-        brandLabel.textContent = product.BRAND.toUpperCase();
-        brandLabel.style.backgroundColor = brandColors[brandKey] || '#333';
-        imageContainer.appendChild(brandLabel);
-        
-        // S-Coin Badge
-        const scoinBadge = document.createElement('div');
-        scoinBadge.className = 'scoin-badge';
-        scoinBadge.innerHTML = `
-          <div class="scoin-icon"></div>
-          <div class="scoin-content">
-            <div class="scoin-value">${formatScoin(product.SCOIN)}</div>
-            <div class="scoin-label">S-Coin<div>Cashback</div></div>
-          </div>
-        `;
-        imageContainer.appendChild(scoinBadge);
-        
-        card.appendChild(imageContainer);
-        
-        // Product Details
-        const details = document.createElement('div');
-        details.className = 'product-details';
-        
-        const title = document.createElement('h3');
-        title.className = 'product-title';
-        title.textContent = product.DESC;
-        details.appendChild(title);
-        
-        const model = document.createElement('p');
-        model.className = 'product-model';
-        model.textContent = product.MODEL;
-        details.appendChild(model);
-        
-        const origPrice = document.createElement('p');
-        origPrice.className = 'original-price';
-        origPrice.textContent = `Original: ${formatPrice(product.RCP)}`;
-        details.appendChild(origPrice);
-        
-        // Price Badges
-        const priceBadgeContainer = document.createElement('div');
-        priceBadgeContainer.className = 'price-badge-container';
-        
-        // Member Price
-        const memberPrice = document.createElement('div');
-        memberPrice.className = 'member-price';
-        memberPrice.innerHTML = `
-          <span class="price-label">MEMBER PRICE</span>
-          <span class="price-value">${formatPrice(product.BLK)}</span>
-        `;
-        priceBadgeContainer.appendChild(memberPrice);
-        details.appendChild(priceBadgeContainer);
-        
-        card.appendChild(details);
-        container.appendChild(card);
-      });
-    }
+        function renderProducts(products) {
+            const container = document.getElementById('product-container');
+            
+            products.forEach(product => {
+                const card = document.createElement('article');
+                card.className = 'product-card';
 
-    fetch('pahang.xlsx')
-      .then(response => response.arrayBuffer())
-      .then(data => {
-        const workbook = XLSX.read(data, { type: 'array' });
-        const firstSheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheetName];
-        const products = XLSX.utils.sheet_to_json(worksheet);
-        renderProducts(products);
-      })
-      .catch(error => {
-        console.error('Error loading XLSX file:', error);
-      });
-  </script>
+                // Media section
+                const mediaWrapper = document.createElement('div');
+                mediaWrapper.className = 'media-wrapper';
+                
+                const img = document.createElement('img');
+                img.className = 'product-image';
+                img.src = product.URL;
+                img.alt = product.DESC;
+                mediaWrapper.appendChild(img);
+
+                // Brand tag
+                const brandTag = document.createElement('div');
+                brandTag.className = 'brand-tag';
+                brandTag.innerHTML = `
+                    <div class="brand-color" style="background: ${brandColors[product.BRAND.toLowerCase()]}"></div>
+                    ${product.BRAND}
+                `;
+                mediaWrapper.appendChild(brandTag);
+
+                // Card body
+                const cardBody = document.createElement('div');
+                cardBody.className = 'card-body';
+
+                // S-Coin badge
+                const scoinBadge = document.createElement('div');
+                scoinBadge.className = 's-coin-badge';
+                scoinBadge.innerHTML = `
+                    <img src="https://seco.com.my/wp-content/uploads/2024/03/No-earn-limits-1-300x259.png" alt="S-Coin">
+                    <div>
+                        <div class="s-coin-value">${formatScoin(product.SCOIN)}</div>
+                        <div class="s-coin-label">Cashback</div>
+                    </div>
+                `;
+                cardBody.appendChild(scoinBadge);
+
+                // Product info
+                const title = document.createElement('h3');
+                title.className = 'product-title';
+                title.textContent = product.DESC;
+                cardBody.appendChild(title);
+
+                const model = document.createElement('div');
+                model.className = 'product-model';
+                model.textContent = product.MODEL;
+                cardBody.appendChild(model);
+
+                // Pricing
+                const pricePanel = document.createElement('div');
+                pricePanel.className = 'price-panel';
+                pricePanel.innerHTML = `
+                    <div class="original-price">${formatPrice(product.RCP)}</div>
+                    <div class="member-price">
+                        <span>${formatPrice(product.BLK)}</span>
+                        <span class="currency">Member Price</span>
+                    </div>
+                `;
+                cardBody.appendChild(pricePanel);
+
+                // Assembly
+                card.appendChild(mediaWrapper);
+                card.appendChild(cardBody);
+                container.appendChild(card);
+            });
+        }
+
+        fetch('pahang.xlsx')
+            .then(response => response.arrayBuffer())
+            .then(data => {
+                const workbook = XLSX.read(data, { type: 'array' });
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const products = XLSX.utils.sheet_to_json(worksheet);
+                renderProducts(products);
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
 </body>
 </html>

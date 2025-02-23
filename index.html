@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ElectroLux Hub | Exclusive Member Benefits</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>ElectroHub | Member Exclusive Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
-            --primary: #0F172A;
-            --accent: #3B82F6;
-            --gold: #F59E0B;
-            --success: #10B981;
-            --dark: #1E293B;
-            --light: #F8FAFC;
+            --primary: #1A365D;
+            --accent: #4299E1;
+            --success: #48BB78;
+            --gold: #D69E2E;
+            --light: #F7FAFC;
+            --dark: #2D3748;
         }
 
         * {
@@ -23,191 +23,160 @@
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--primary);
-            color: var(--light);
-            line-height: 1.6;
+            font-family: 'Inter', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.5;
         }
 
         .container {
             max-width: 1440px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 2rem 1rem;
         }
 
         .header {
             text-align: center;
             margin-bottom: 3rem;
-            position: relative;
-            overflow: hidden;
-            padding: 4rem 1rem;
-            background: linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(15,23,42,1) 100%);
         }
 
         .header h1 {
-            font-size: 2.8rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            background: linear-gradient(45deg, #3B82F6, #60A5FA);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .header p {
-            color: #94A3B8;
-            max-width: 600px;
-            margin: 0 auto;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
         }
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
             padding: 1rem;
         }
 
         .product-card {
-            background: var(--dark);
-            border-radius: 1.5rem;
+            background: white;
+            border-radius: 12px;
             overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
             position: relative;
-            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transform: translateY(-3px);
         }
 
-        .media-wrapper {
+        .image-wrapper {
             position: relative;
-            padding-top: 100%;
-            background: #0F172A;
+            padding: 2rem;
+            background: linear-gradient(135deg, #F7FAFC 0%, #EDF2F7 100%);
+            border-bottom: 1px solid #E2E8F0;
         }
 
         .product-image {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-            height: 80%;
+            width: 100%;
+            height: 200px;
             object-fit: contain;
-            mix-blend-mode: luminosity;
-            transition: mix-blend-mode 0.3s ease;
-        }
-
-        .product-card:hover .product-image {
-            mix-blend-mode: normal;
+            mix-blend-mode: multiply;
         }
 
         .brand-tag {
             position: absolute;
             top: 1rem;
             left: 1rem;
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            padding: 0.5rem 1rem;
-            border-radius: 2rem;
-            font-size: 0.9rem;
-            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            background: rgba(255,255,255,0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .brand-color {
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            box-shadow: 0 0 8px currentColor;
         }
 
-        .card-body {
+        .content-wrapper {
             padding: 1.5rem;
-            position: relative;
         }
 
         .product-title {
             font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-            color: var(--light);
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 3em;
         }
 
         .product-model {
-            color: #94A3B8;
+            color: #718096;
             font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .price-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 1rem;
         }
 
-        .price-panel {
-            display: grid;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
         .original-price {
+            color: #A0AEC0;
             text-decoration: line-through;
-            color: #64748B;
             font-size: 0.9rem;
         }
 
         .member-price {
+            color: var(--success);
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--success);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
         .s-coin-badge {
-            position: absolute;
-            top: -25px;
-            right: 1.5rem;
-            background: linear-gradient(45deg, #F59E0B, #FCD34D);
-            padding: 0.75rem 1.5rem;
-            border-radius: 2rem;
+            background: linear-gradient(45deg, #F6E05E, #D69E2E);
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            box-shadow: 0 4px 15px rgba(245,158,11,0.3);
+            margin-top: 1rem;
         }
 
-        .s-coin-badge img {
-            width: 28px;
-            height: 28px;
+        .s-coin-icon {
+            width: 32px;
+            height: 32px;
+        }
+
+        .s-coin-content {
+            line-height: 1.2;
         }
 
         .s-coin-value {
+            font-size: 1.2rem;
             font-weight: 700;
             color: var(--primary);
-            font-size: 1.2rem;
         }
 
         .s-coin-label {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--primary);
-            font-weight: 600;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .currency {
             font-size: 0.8em;
-            color: #94A3B8;
-        }
-
-        .benefits-tag {
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--accent);
-            padding: 0.5rem 2rem;
-            border-radius: 2rem 2rem 0 0;
-            font-weight: 600;
-            font-size: 0.9rem;
+            color: #718096;
         }
     </style>
 </head>
@@ -215,7 +184,7 @@
     <div class="container">
         <header class="header">
             <h1>Member Exclusive Pricing</h1>
-            <p>Unlock special discounts and earn S-Coins with every purchase</p>
+            <p>Special discounts & S-Coin rewards for verified members</p>
         </header>
 
         <div class="grid" id="product-container"></div>
@@ -238,86 +207,97 @@
         };
 
         function formatPrice(value) {
-            return Number(value).toLocaleString('en-MY', { 
-                style: 'currency', 
+            return new Intl.NumberFormat('en-MY', {
+                style: 'currency',
                 currency: 'MYR',
                 maximumFractionDigits: 0
-            });
+            }).format(value);
         }
 
         function formatScoin(value) {
-            const numericValue = typeof value === 'string' ? parseFloat(value) : value;
-            return numericValue < 1 ? `${Math.round(numericValue * 100)}%` : numericValue.toFixed(0);
+            const numValue = typeof value === 'string' ? 
+                parseFloat(value.replace('%', '')) : value;
+            
+            return numValue < 1 ? 
+                `${Math.round(numValue * 100)}%` : 
+                numValue.toLocaleString('en-MY');
         }
 
         function renderProducts(products) {
             const container = document.getElementById('product-container');
-            
+            container.innerHTML = '';
+
             products.forEach(product => {
-                const card = document.createElement('article');
+                const card = document.createElement('div');
                 card.className = 'product-card';
 
-                // Media section
-                const mediaWrapper = document.createElement('div');
-                mediaWrapper.className = 'media-wrapper';
-                
+                // Image Section
+                const imageWrapper = document.createElement('div');
+                imageWrapper.className = 'image-wrapper';
+
                 const img = document.createElement('img');
                 img.className = 'product-image';
                 img.src = product.URL;
                 img.alt = product.DESC;
-                mediaWrapper.appendChild(img);
+                imageWrapper.appendChild(img);
 
-                // Brand tag
+                // Brand Tag
                 const brandTag = document.createElement('div');
                 brandTag.className = 'brand-tag';
                 brandTag.innerHTML = `
-                    <div class="brand-color" style="background: ${brandColors[product.BRAND.toLowerCase()]}"></div>
+                    <div class="brand-color" 
+                         style="background: ${brandColors[product.BRAND.toLowerCase()]}">
+                    </div>
                     ${product.BRAND}
                 `;
-                mediaWrapper.appendChild(brandTag);
+                imageWrapper.appendChild(brandTag);
 
-                // Card body
-                const cardBody = document.createElement('div');
-                cardBody.className = 'card-body';
+                // Content Section
+                const contentWrapper = document.createElement('div');
+                contentWrapper.className = 'content-wrapper';
 
-                // S-Coin badge
+                // Product Title
+                const title = document.createElement('h2');
+                title.className = 'product-title';
+                title.textContent = product.DESC;
+
+                // Product Model
+                const model = document.createElement('div');
+                model.className = 'product-model';
+                model.textContent = product.MODEL;
+
+                // Pricing Section
+                const priceSection = document.createElement('div');
+                priceSection.className = 'price-section';
+                priceSection.innerHTML = `
+                    <div class="original-price">${formatPrice(product.RCP)}</div>
+                    <div class="member-price">
+                        ${formatPrice(product.BLK)}
+                        <span class="currency">member</span>
+                    </div>
+                `;
+
+                // S-Coin Badge
                 const scoinBadge = document.createElement('div');
                 scoinBadge.className = 's-coin-badge';
                 scoinBadge.innerHTML = `
-                    <img src="https://seco.com.my/wp-content/uploads/2024/03/No-earn-limits-1-300x259.png" alt="S-Coin">
-                    <div>
+                    <img src="https://seco.com.my/wp-content/uploads/2024/03/No-earn-limits-1-300x259.png" 
+                         class="s-coin-icon" 
+                         alt="S-Coin">
+                    <div class="s-coin-content">
                         <div class="s-coin-value">${formatScoin(product.SCOIN)}</div>
                         <div class="s-coin-label">Cashback</div>
                     </div>
                 `;
-                cardBody.appendChild(scoinBadge);
 
-                // Product info
-                const title = document.createElement('h3');
-                title.className = 'product-title';
-                title.textContent = product.DESC;
-                cardBody.appendChild(title);
+                // Assemble Card
+                contentWrapper.appendChild(title);
+                contentWrapper.appendChild(model);
+                contentWrapper.appendChild(priceSection);
+                contentWrapper.appendChild(scoinBadge);
 
-                const model = document.createElement('div');
-                model.className = 'product-model';
-                model.textContent = product.MODEL;
-                cardBody.appendChild(model);
-
-                // Pricing
-                const pricePanel = document.createElement('div');
-                pricePanel.className = 'price-panel';
-                pricePanel.innerHTML = `
-                    <div class="original-price">${formatPrice(product.RCP)}</div>
-                    <div class="member-price">
-                        <span>${formatPrice(product.BLK)}</span>
-                        <span class="currency">Member Price</span>
-                    </div>
-                `;
-                cardBody.appendChild(pricePanel);
-
-                // Assembly
-                card.appendChild(mediaWrapper);
-                card.appendChild(cardBody);
+                card.appendChild(imageWrapper);
+                card.appendChild(contentWrapper);
                 container.appendChild(card);
             });
         }

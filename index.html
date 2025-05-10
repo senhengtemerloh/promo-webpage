@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Refrigerator Promotion Hub</title>
+    <title>Premium Appliance Promotions</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -11,7 +11,7 @@
             --accent: #4a5568;
             --discount: #c53030;
             --success: #2f855a;
-            --highlight: #f7fafc;
+            --highlight: #fff5f5;
         }
 
         body {
@@ -37,10 +37,12 @@
             display: flex;
             flex-direction: column;
             transition: transform 0.2s;
+            position: relative;
         }
 
-        .product-card:hover {
-            transform: translateY(-3px);
+        .product-card.special-promo {
+            border: 2px solid var(--discount);
+            background: var(--highlight);
         }
 
         .image-grid {
@@ -126,12 +128,6 @@
             flex-wrap: wrap;
         }
 
-        .voucher-indicator {
-            color: var(--discount);
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
         .badge-group {
             display: flex;
             gap: 8px;
@@ -162,9 +158,9 @@
         }
 
         .remarks {
-            color: var(--success);
+            color: var(--discount);
             font-size: 0.85rem;
-            font-weight: 500;
+            font-weight: 600;
             margin-bottom: 0.5rem;
         }
 
@@ -257,14 +253,10 @@
                 const hasSpecial = product.special && product.special !== '';
                 const hasVoucher = product.voucher && product.voucher !== '';
                 const hasRemarks = product.remarks && product.remarks !== '';
+                const isSpecialPromo = hasSpecial && hasRemarks;
                 
                 const card = document.createElement('div');
-                card.className = 'product-card';
-
-                // Price calculation
-                const finalPrice = hasSpecial ? 
-                    product.special - (product.voucher || 0) :
-                    product.memberPrice - (product.voucher || 0);
+                card.className = `product-card${isSpecialPromo ? ' special-promo' : ''}`;
 
                 card.innerHTML = `
                     <div class="image-grid">
@@ -286,12 +278,7 @@
                                 <div class="member-price">Member: RM ${product.memberPrice}</div>
                                 <div class="special-price">Special: RM ${product.special}</div>
                             ` : `
-                                <div class="price-comparison">
-                                    <span class="special-price">RM ${product.memberPrice}</span>
-                                    ${hasVoucher ? `
-                                        <span class="voucher-indicator">→ RM ${finalPrice}</span>
-                                    ` : ''}
-                                </div>
+                                <div class="member-price">Member: RM ${product.memberPrice}</div>
                             `}
                         </div>
 
@@ -307,7 +294,7 @@
 
                     <div class="footer-info">
                         ${hasRemarks ? `
-                            <div class="remarks">Promo Period: ${product.remarks}</div>
+                            <div class="remarks">${product.remarks}</div>
                         ` : ''}
                         <div class="model-code">${product.model}</div>
                     </div>

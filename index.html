@@ -1,166 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Promo Catalogue</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Tailwind via CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- SheetJS for parsing XLSX -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.20.0/dist/xlsx.full.min.js"></script>
-    <!--
-      ⚠️  SECURITY NOTE
-      Modern browsers prohibit JS from reading sibling files when you open an HTML page with the **file://** protocol.
-      Run a tiny local web‑server instead (the code works instantly):
-        • Python 3 →  `python -m http.server 8080` then browse to http://localhost:8080
-        • or Node  →  `npx http-server .`
-      If you *must* double‑click the file, an upload fall‑back appears so you can browse to SBS_filled.xlsx manually.
-    -->
-    <style>
-      .no-scrollbar::-webkit-scrollbar { display: none; }
-      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    </style>
-  </head>
-  <body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
-    <header class="sticky top-0 bg-white shadow z-10">
-      <h1 class="text-2xl font-extrabold p-4 text-center">Promo Catalogue</h1>
-    </header>
+<head>
+  <meta charset="UTF-8">
+  <title>Promo Catalogue</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.20.0/dist/xlsx.full.min.js"></script>
+  <style>
+    .no-scrollbar::-webkit-scrollbar{display:none}
+    .no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
+  <header class="sticky top-0 bg-white shadow z-10"><h1 class="text-2xl font-extrabold p-4 text-center">Promo Catalogue</h1></header>
+  <main id="catalogue" class="flex-1 max-w-7xl mx-auto p-4 grid gap-6 grid-cols-[repeat(auto-fill,minmax(260px,1fr))]"></main>
+  <footer class="text-center text-xs py-6 text-gray-500">* Prices & promotions subject to change without notice. Check in‑store for latest updates.</footer>
 
-    <main id="catalogue" class="flex-1 max-w-7xl mx-auto p-4 grid gap-6 grid-cols-[repeat(auto-fill,minmax(260px,1fr))]"></main>
+  <script>
+    // ########  QUICK TROUBLESHOOT ########
+    // 1) This page MUST be served over http://  or https:// ;
+    //    if you see  location.protocol === 'file:', browsers block fetch for security.
+    // 2) From this folder, run ONE of the following then browse to  http://localhost:8080 :
+    //       •  python -m http.server 8080
+    //       •  npx http-server -p 8080
+    // 3) Keep  index.html  and  SBS_filled.xlsx  side‑by‑side (same directory).
 
-    <!-- Excel upload fallback (hidden until needed) -->
-    <div id="uploaderWrap" class="hidden w-full flex-col items-center justify-center py-20 text-center gap-4">
-      <p class="text-lg font-semibold">Could not fetch <code>SBS_filled.xlsx</code> automatically.</p>
-      <label class="inline-flex items-center gap-2 cursor-pointer px-4 py-2 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700">
-        <input id="fileInput" type="file" accept=".xlsx" class="hidden" />
-        <span>Choose file manually</span>
-      </label>
-      <p class="text-sm text-gray-500 max-w-xs">(Tip: avoid this step by serving the folder through a small local server as described in the HTML comments.)</p>
-    </div>
+    if(location.protocol === 'file:'){
+      document.body.insertAdjacentHTML('afterbegin',`
+        <div class="fixed inset-0 bg-black/70 backdrop-blur flex flex-col items-center justify-center text-white p-6 z-50 gap-4 text-center">
+          <h2 class="text-xl font-bold">Local file security block</h2>
+          <p class="max-w-sm">Web browsers won’t let JavaScript read sibling files when you open an HTML file directly. <br>Run a tiny local server and reload the page:</p>
+          <pre class="bg-gray-800/70 rounded px-3 py-2 text-sm">python -m http.server 8080</pre>
+          <p class="text-sm opacity-75">Then visit <span class="underline">http://localhost:8080</span></p>
+        </div>`);
+    }
 
-    <footer class="text-center text-xs py-6 text-gray-500">
-      * Prices & promotions subject to change without notice. Check in‑store for latest updates.
-    </footer>
+    const catalogue = document.getElementById('catalogue');
+    const money = n=>n==null?'-':'RM '+Number(n).toLocaleString('en-MY',{minimumFractionDigits:0});
+    const percent=d=>d==null?null:Math.round(d*100)+'%';
+    const calc=(p,v)=>p==null?null:(v?Math.max(p-v,0):p);
+    const num=x=>{if(x==null||x==='\u00a0')return null;const v=parseFloat(String(x).replace(/[^\d.\-]/g,''));return isNaN(v)?null:v};
 
-    <script>
-      const catalogue = document.getElementById("catalogue");
-      const uploadWrap = document.getElementById("uploaderWrap");
-      const fileInput  = document.getElementById("fileInput");
+    const clean=row=>({
+      model:row.MODEL,name:row.NAME,capacity:row.CAPACITY,images:[row.IMAGE1,row.IMAGE2].filter(Boolean),
+      rcp:num(row.RCP),memberPrice:num(row['MEMBER PRICE']),specialPrice:num(row.SPECIAL),
+      sCoin:num(row['S-COIN']),voucher:num(row.VOUCHER),remarks:row.REMARKS
+    });
 
-      // Utility helpers
-      const money   = n => n == null ? "-" : "RM " + Number(n).toLocaleString("en-MY", {minimumFractionDigits:0});
-      const percent = d => d == null ? null : Math.round(d*100) + "%";
-      const calc    = (price, voucher)=> price==null?null: (voucher? Math.max(price - voucher,0): price);
-      const num     = x=>{ if(x==null||x==='\u00a0') return null; const v=parseFloat(String(x).replace(/[^\d.\-]/g,'')); return isNaN(v)?null:v; };
+    function buildCard(p){
+      const memberFinal=calc(p.memberPrice,p.voucher);
+      const specialFinal=calc(p.specialPrice,p.voucher);
+      const card=document.createElement('div');
+      card.className='relative bg-white rounded-2xl shadow hover:shadow-lg transition flex flex-col p-4 gap-3';
+      if(p.capacity){card.insertAdjacentHTML('beforeend',`<span class="absolute top-2 right-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded-full">${p.capacity}</span>`)}
+      const imgWrap=document.createElement('div');imgWrap.className='w-full aspect-[4/3] bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center cursor-pointer';
+      let idx=0;const img=document.createElement('img');img.className='h-full w-full object-contain';img.src=p.images[idx]||'';img.alt=p.name;imgWrap.appendChild(img);
+      imgWrap.addEventListener('click',()=>{if(p.images.length<2)return;idx=1-idx;img.src=p.images[idx]});
+      card.appendChild(imgWrap);
+      card.insertAdjacentHTML('beforeend',`
+        <h3 class="text-sm font-semibold leading-snug">${p.name}</h3>
+        <div class="flex flex-col gap-0.5">
+          <span class="text-xs line-through text-gray-500">${money(p.rcp)}</span>
+          ${specialFinal?`
+            <span class="text-lg font-bold text-red-600">${money(specialFinal)}</span>
+            <span class="text-[11px] text-gray-600">Member <span class="line-through">${money(memberFinal)}</span> | Promo: ${p.remarks||'-'}</span>
+          `:`<span class="text-lg font-bold text-green-700">${money(memberFinal)}</span>`}
+        </div>`);
+      const row=document.createElement('div');row.className='flex flex-wrap gap-1 mt-auto';
+      if(p.voucher)row.insertAdjacentHTML('beforeend',`<span class="text-[11px] bg-yellow-400/90 text-gray-900 font-semibold rounded px-1.5">Voucher RM ${p.voucher}</span>`);
+      if(p.sCoin)row.insertAdjacentHTML('beforeend',`<span class="text-[11px] bg-blue-600 text-white font-semibold rounded px-1.5">Get ${percent(p.sCoin)} S‑Coin</span>`);
+      card.appendChild(row);
+      catalogue.appendChild(card);
+    }
 
-      // Clean sheet row into nicer object
-      function clean(row){
-        return {
-          model: row["MODEL"],
-          name: row["NAME"],
-          capacity: row["CAPACITY"],
-          images: [row["IMAGE1"], row["IMAGE2"]].filter(Boolean),
-          rcp: num(row["RCP"]),
-          memberPrice: num(row["MEMBER PRICE"]),
-          specialPrice: num(row["SPECIAL"]),
-          sCoin: num(row["S-COIN"]),
-          voucher: num(row["VOUCHER"]),
-          remarks: row["REMARKS"]
-        };
+    async function init(){
+      try{
+        const res=await fetch('SBS_filled.xlsx');
+        if(!res.ok)throw new Error('HTTP '+res.status);
+        const buf=await res.arrayBuffer();
+        const wb=XLSX.read(buf,{type:'array'});
+        const ws=wb.Sheets[wb.SheetNames[0]];
+        XLSX.utils.sheet_to_json(ws,{defval:null}).map(clean).forEach(buildCard);
+      }catch(e){
+        console.error(e);
+        catalogue.innerHTML='<p class="col-span-full text-center text-red-600">Failed to load <code>SBS_filled.xlsx</code>. Make sure you are running a local web‑server and the file name matches exactly.</p>';
       }
-
-      // Build DOM card
-      function buildCard(p){
-        const memberFinal  = calc(p.memberPrice,  p.voucher);
-        const specialFinal = calc(p.specialPrice, p.voucher);
-
-        const card = document.createElement("div");
-        card.className = "relative bg-white rounded-2xl shadow hover:shadow-lg transition flex flex-col p-4 gap-3";
-
-        // capacity badge
-        if(p.capacity){
-          const badge = document.createElement("span");
-          badge.className = "absolute top-2 right-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded-full";
-          badge.textContent = p.capacity;
-          card.appendChild(badge);
-        }
-
-        // images
-        const imgWrap = document.createElement("div");
-        imgWrap.className = "w-full aspect-[4/3] bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center cursor-pointer";
-
-        let idx = 0;
-        const imgEl = document.createElement("img");
-        imgEl.src = p.images[idx] || "";
-        imgEl.alt = p.name;
-        imgEl.className = "h-full w-full object-contain";
-        imgWrap.appendChild(imgEl);
-
-        imgWrap.addEventListener("click", ()=>{
-          if(p.images.length < 2) return;
-          idx = 1 - idx;
-          imgEl.src = p.images[idx];
-        });
-        card.appendChild(imgWrap);
-
-        // title & prices
-        card.insertAdjacentHTML("beforeend", `
-          <h3 class="text-sm font-semibold leading-snug">${p.name}</h3>
-          <div class="flex flex-col gap-0.5">
-            <span class="text-xs line-through text-gray-500">${money(p.rcp)}</span>
-            ${ specialFinal ? `
-              <span class="text-lg font-bold text-red-600">${money(specialFinal)}</span>
-              <span class="text-[11px] text-gray-600">Member <span class="line-through">${money(memberFinal)}</span> | Promo: ${p.remarks || '-'}</span>
-            ` : `
-              <span class="text-lg font-bold text-green-700">${money(memberFinal)}</span>
-            `}
-          </div>`);
-
-        // extras row
-        const row = document.createElement("div");
-        row.className = "flex flex-wrap gap-1 mt-auto";
-        if(p.voucher){
-          row.insertAdjacentHTML("beforeend", `<span class="text-[11px] bg-yellow-400/90 text-gray-900 font-semibold rounded px-1.5">Voucher RM ${p.voucher}</span>`);
-        }
-        if(p.sCoin){
-          row.insertAdjacentHTML("beforeend", `<span class="text-[11px] bg-blue-600 text-white font-semibold rounded px-1.5">Get ${percent(p.sCoin)} S‑Coin</span>`);
-        }
-        card.appendChild(row);
-
-        catalogue.appendChild(card);
-      }
-
-      // Main loader (buffer → SheetJS → cards)
-      async function loadBuffer(buf){
-        const wb   = XLSX.read(buf, {type:"array"});
-        const ws   = wb.Sheets[wb.SheetNames[0]];
-        const raw  = XLSX.utils.sheet_to_json(ws, {defval:null});
-        const products = raw.map(clean);
-        catalogue.innerHTML = ""; // clear any previous
-        products.forEach(buildCard);
-      }
-
-      // Attempt auto‑fetch first
-      (async ()=>{
-        try{
-          const res = await fetch('./SBS_filled.xlsx');
-          if(!res.ok) throw new Error(`HTTP ${res.status}`);
-          const buf = await res.arrayBuffer();
-          await loadBuffer(buf);
-        }catch(err){
-          console.warn('Auto‑fetch failed:', err);
-          uploadWrap.classList.remove('hidden');
-        }
-      })();
-
-      // Fallback manual upload
-      fileInput?.addEventListener('change', async e=>{
-        const file = e.target.files?.[0];
-        if(!file) return;
-        const arrayBuf = await file.arrayBuffer();
-        await loadBuffer(arrayBuf);
-        uploadWrap.classList.add('hidden');
-      });
-    </script>
-  </body>
+    }
+    init();
+  </script>
+</body>
 </html>

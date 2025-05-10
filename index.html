@@ -121,13 +121,6 @@
             margin-top: 0.5rem;
         }
 
-        .price-comparison {
-            display: flex;
-            align-items: baseline;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
         .badge-group {
             display: flex;
             gap: 8px;
@@ -151,17 +144,20 @@
             font-size: 0.85rem;
         }
 
+        .remarks-banner {
+            background: var(--discount);
+            color: white;
+            padding: 8px 16px;
+            text-align: center;
+            margin: 1rem 0;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
         .footer-info {
             border-top: 1px solid #e2e8f0;
             padding: 1rem 1.25rem;
             margin-top: auto;
-        }
-
-        .remarks {
-            color: var(--discount);
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
         }
 
         .model-code {
@@ -170,7 +166,6 @@
             text-align: right;
         }
 
-        /* Image Modal */
         .modal {
             display: none;
             position: fixed;
@@ -217,6 +212,10 @@
     </div>
 
     <script>
+        function formatPrice(price) {
+            return Number(price).toLocaleString('en-US');
+        }
+
         async function loadExcelData() {
             try {
                 const response = await fetch('data.xlsx');
@@ -251,7 +250,7 @@
             
             products.forEach(product => {
                 const hasSpecial = product.special && product.special !== '';
-                const hasVoucher = product.voucher && product.voucher !== '';
+                const hasVoucher = product.voucher && product.voucher !== 0;
                 const hasRemarks = product.remarks && product.remarks !== '';
                 const isSpecialPromo = hasSpecial && hasRemarks;
                 
@@ -270,32 +269,35 @@
                     </div>
 
                     <div class="card-content">
+                        ${hasRemarks ? `
+                            <div class="remarks-banner">${product.remarks}</div>
+                        ` : ''}
+
                         <h3 class="product-title">${product.name}</h3>
 
                         <div class="price-stack">
-                            <div class="rcp-price">RM ${product.rcp}</div>
+                            <div class="rcp-price">RM ${formatPrice(product.rcp)}</div>
                             ${hasSpecial ? `
-                                <div class="member-price">Member: RM ${product.memberPrice}</div>
-                                <div class="special-price">Special: RM ${product.special}</div>
+                                <div class="member-price">Member: RM ${formatPrice(product.memberPrice)}</div>
+                                <div class="special-price">Special: RM ${formatPrice(product.special)}</div>
                             ` : `
-                                <div class="member-price">Member: RM ${product.memberPrice}</div>
+                                <div class="member-price">Member: RM ${formatPrice(product.memberPrice)}</div>
                             `}
                         </div>
 
-                        <div class="badge-group">
-                            ${hasVoucher ? `
-                                <div class="voucher-badge">Instant Save RM ${product.voucher}</div>
-                            ` : ''}
-                            ${product.sCoin ? `
-                                <div class="s-coin-badge">S-Coin ${product.sCoin * 100}%</div>
-                            ` : ''}
-                        </div>
+                        ${hasVoucher || product.sCoin ? `
+                            <div class="badge-group">
+                                ${hasVoucher ? `
+                                    <div class="voucher-badge">Instant Save RM ${formatPrice(product.voucher)}</div>
+                                ` : ''}
+                                ${product.sCoin ? `
+                                    <div class="s-coin-badge">S-Coin ${product.sCoin * 100}%</div>
+                                ` : ''}
+                            </div>
+                        ` : ''}
                     </div>
 
                     <div class="footer-info">
-                        ${hasRemarks ? `
-                            <div class="remarks">${product.remarks}</div>
-                        ` : ''}
                         <div class="model-code">${product.model}</div>
                     </div>
                 `;

@@ -11,6 +11,7 @@
         :root {
             --bg: #121212;
             --surface: #1e1e1e;
+            --image-bg: #2e2e2e;
             --primary: #bb86fc;
             --accent: #03dac6;
             --discount: #cf6679;
@@ -66,14 +67,14 @@
             grid-template-columns: 1fr 1fr;
             gap: 2px;
             height: 200px;
-            background: var(--highlight);
+            background: var(--image-bg);
         }
 
         .image-container {
             position: relative;
             overflow: hidden;
             cursor: zoom-in;
-            background: var(--surface);
+            background: var(--image-bg);
         }
 
         .product-image {
@@ -81,6 +82,7 @@
             height: 100%;
             object-fit: contain;
             transition: transform 0.3s;
+            background: var(--image-bg);
         }
 
         .image-container:hover .product-image {
@@ -206,6 +208,7 @@
             max-height: 90%;
             object-fit: contain;
             border-radius: 8px;
+            background: var(--image-bg);
         }
 
         .close-btn {

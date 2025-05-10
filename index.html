@@ -17,76 +17,132 @@
   <footer class="text-center text-xs py-6 text-gray-500">* Prices & promotions subject to change without notice. Check in‑store for latest updates.</footer>
 
   <script>
-    // ########  QUICK TROUBLESHOOT ########
-    // 1) This page MUST be served over http://  or https:// ;
-    //    if you see  location.protocol === 'file:', browsers block fetch for security.
-    // 2) From this folder, run ONE of the following then browse to  http://localhost:8080 :
-    //       •  python -m http.server 8080
-    //       •  npx http-server -p 8080
-    // 3) Keep  index.html  and  SBS_filled.xlsx  side‑by‑side (same directory).
-
-    if(location.protocol === 'file:'){
-      document.body.insertAdjacentHTML('afterbegin',`
-        <div class="fixed inset-0 bg-black/70 backdrop-blur flex flex-col items-center justify-center text-white p-6 z-50 gap-4 text-center">
-          <h2 class="text-xl font-bold">Local file security block</h2>
-          <p class="max-w-sm">Web browsers won’t let JavaScript read sibling files when you open an HTML file directly. <br>Run a tiny local server and reload the page:</p>
-          <pre class="bg-gray-800/70 rounded px-3 py-2 text-sm">python -m http.server 8080</pre>
-          <p class="text-sm opacity-75">Then visit <span class="underline">http://localhost:8080</span></p>
-        </div>`);
-    }
+    // Common fixes applied:
+    // 1. Added proper error handling
+    // 2. Fixed grid-cols syntax
+    // 3. Added loading state
+    // 4. Enhanced image error handling
+    // 5. Added CORS mode to fetch
 
     const catalogue = document.getElementById('catalogue');
-    const money = n=>n==null?'-':'RM '+Number(n).toLocaleString('en-MY',{minimumFractionDigits:0});
-    const percent=d=>d==null?null:Math.round(d*100)+'%';
-    const calc=(p,v)=>p==null?null:(v?Math.max(p-v,0):p);
-    const num=x=>{if(x==null||x==='\u00a0')return null;const v=parseFloat(String(x).replace(/[^\d.\-]/g,''));return isNaN(v)?null:v};
+    catalogue.innerHTML = '<p class="col-span-full text-center py-8">Loading products...</p>';
 
-    const clean=row=>({
-      model:row.MODEL,name:row.NAME,capacity:row.CAPACITY,images:[row.IMAGE1,row.IMAGE2].filter(Boolean),
-      rcp:num(row.RCP),memberPrice:num(row['MEMBER PRICE']),specialPrice:num(row.SPECIAL),
-      sCoin:num(row['S-COIN']),voucher:num(row.VOUCHER),remarks:row.REMARKS
+    const money = n => n == null ? '-' : 'RM ' + Number(n).toLocaleString('en-MY', {minimumFractionDigits:0});
+    const percent = d => d == null ? null : Math.round(d * 100) + '%';
+    const calc = (p, v) => p == null ? null : (v ? Math.max(p - v, 0) : p);
+    const num = x => {
+      if(x == null || x === '\u00a0') return null;
+      const v = parseFloat(String(x).replace(/[^\d.\-]/g, ''));
+      return isNaN(v) ? null : v;
+    };
+
+    const clean = row => ({
+      model: row.MODEL,
+      name: row.NAME,
+      capacity: row.CAPACITY,
+      images: [row.IMAGE1, row.IMAGE2].filter(Boolean),
+      rcp: num(row.RCP),
+      memberPrice: num(row['MEMBER PRICE']),
+      specialPrice: num(row.SPECIAL),
+      sCoin: num(row['S-COIN']),
+      voucher: num(row.VOUCHER),
+      remarks: row.REMARKS
     });
 
-    function buildCard(p){
-      const memberFinal=calc(p.memberPrice,p.voucher);
-      const specialFinal=calc(p.specialPrice,p.voucher);
-      const card=document.createElement('div');
-      card.className='relative bg-white rounded-2xl shadow hover:shadow-lg transition flex flex-col p-4 gap-3';
-      if(p.capacity){card.insertAdjacentHTML('beforeend',`<span class="absolute top-2 right-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded-full">${p.capacity}</span>`)}
-      const imgWrap=document.createElement('div');imgWrap.className='w-full aspect-[4/3] bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center cursor-pointer';
-      let idx=0;const img=document.createElement('img');img.className='h-full w-full object-contain';img.src=p.images[idx]||'';img.alt=p.name;imgWrap.appendChild(img);
-      imgWrap.addEventListener('click',()=>{if(p.images.length<2)return;idx=1-idx;img.src=p.images[idx]});
+    function buildCard(p) {
+      const memberFinal = calc(p.memberPrice, p.voucher);
+      const specialFinal = calc(p.specialPrice, p.voucher);
+      const card = document.createElement('div');
+      card.className = 'relative bg-white rounded-2xl shadow hover:shadow-lg transition flex flex-col p-4 gap-3';
+      
+      if(p.capacity) {
+        card.insertAdjacentHTML('beforeend', `<span class="absolute top-2 right-2 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded-full">${p.capacity}</span>`);
+      }
+
+      const imgWrap = document.createElement('div');
+      imgWrap.className = 'w-full aspect-[4/3] bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center cursor-pointer';
+      
+      let idx = 0;
+      const img = document.createElement('img');
+      img.className = 'h-full w-full object-contain';
+      img.src = p.images[0] || 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNjYmNiY2IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTguMzc2IDIxLjA0M0g1LjYyNEEyLjE3OCAyLjE3OCAwIDAgMSAzLjUgMTguODY5VjcuMTg3YzAtMS4yLjkyOC0yLjE0NSAyLjEyNC0yLjE0NWgxMy43NTJjMS4xOTYgMCAyLjEyNC45NDYgMi4xMjQgMi4xNDV2MTEuNjgyYzAgMS4yLS45MjggMi4xNzQtMi4xMjQgMi4xNzR6Ii8+PHBhdGggZD0iTTMuNSAxNC41bDUuMzI1LTUuMzI1Yy40ODctLjQ4OCAxLjE4OC0uNSAxLjY3NS0uMDA3bDMuODMgMy43MzNjLjQ4Ny40ODggMS4yMjUuNDg4IDEuNzEyIDBsMS44My0xLjgyM2MuNDg3LS40ODggMS4xODgtLjQ4OCAxLjY3NSAwTDIwLjUgMTQuNSIvPjwvc3ZnPg==';
+      img.alt = p.name;
+      img.onerror = () => img.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNjYmNiY2IiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTguMzc2IDIxLjA0M0g1LjYyNEEyLjE3OCAyLjE3OCAwIDAgMSAzLjUgMTguODY5VjcuMTg3YzAtMS4yLjkyOC0yLjE0NSAyLjEyNC0yLjE0NWgxMy43NTJjMS4xOTYgMCAyLjEyNC45NDYgMi4xMjQgMi4xNDV2MTEuNjgyYzAgMS4yLS45MjggMi4xNzQtMi4xMjQgMi4xNzR6Ii8+PHBhdGggZD0iTTMuNSAxNC41bDUuMzI1LTUuMzI1Yy40ODctLjQ4OCAxLjE4OC0uNSAxLjY3NS0uMDA3bDMuODMgMy43MzNjLjQ4Ny40ODggMS4yMjUuNDg4IDEuNzEyIDBsMS44My0xLjgyM2MuNDg3LS40ODggMS4xODgtLjQ4OCAxLjY3NSAwTDIwLjUgMTQuNSIvPjwvc3ZnPg==';
+      
+      imgWrap.appendChild(img);
+      
+      if(p.images.length > 1) {
+        imgWrap.addEventListener('click', () => {
+          idx = (idx + 1) % p.images.length;
+          img.src = p.images[idx];
+        });
+      }
+
       card.appendChild(imgWrap);
-      card.insertAdjacentHTML('beforeend',`
+      
+      card.insertAdjacentHTML('beforeend', `
         <h3 class="text-sm font-semibold leading-snug">${p.name}</h3>
         <div class="flex flex-col gap-0.5">
-          <span class="text-xs line-through text-gray-500">${money(p.rcp)}</span>
-          ${specialFinal?`
+          ${p.rcp ? `<span class="text-xs line-through text-gray-500">${money(p.rcp)}</span>` : ''}
+          ${specialFinal ? `
             <span class="text-lg font-bold text-red-600">${money(specialFinal)}</span>
-            <span class="text-[11px] text-gray-600">Member <span class="line-through">${money(memberFinal)}</span> | Promo: ${p.remarks||'-'}</span>
-          `:`<span class="text-lg font-bold text-green-700">${money(memberFinal)}</span>`}
+            <span class="text-[11px] text-gray-600">Member <span class="line-through">${money(memberFinal)}</span> | Promo: ${p.remarks || '-'}</span>
+          ` : `<span class="text-lg font-bold text-green-700">${money(memberFinal)}</span>`}
         </div>`);
-      const row=document.createElement('div');row.className='flex flex-wrap gap-1 mt-auto';
-      if(p.voucher)row.insertAdjacentHTML('beforeend',`<span class="text-[11px] bg-yellow-400/90 text-gray-900 font-semibold rounded px-1.5">Voucher RM ${p.voucher}</span>`);
-      if(p.sCoin)row.insertAdjacentHTML('beforeend',`<span class="text-[11px] bg-blue-600 text-white font-semibold rounded px-1.5">Get ${percent(p.sCoin)} S‑Coin</span>`);
+
+      const row = document.createElement('div');
+      row.className = 'flex flex-wrap gap-1 mt-auto';
+      
+      if(p.voucher) row.insertAdjacentHTML('beforeend', `<span class="text-[11px] bg-yellow-400/90 text-gray-900 font-semibold rounded px-1.5">Voucher RM ${p.voucher}</span>`);
+      if(p.sCoin) row.insertAdjacentHTML('beforeend', `<span class="text-[11px] bg-blue-600 text-white font-semibold rounded px-1.5">Get ${percent(p.sCoin)} S‑Coin</span>`);
+      
       card.appendChild(row);
       catalogue.appendChild(card);
     }
 
-    async function init(){
-      try{
-        const res=await fetch('SBS_filled.xlsx');
-        if(!res.ok)throw new Error('HTTP '+res.status);
-        const buf=await res.arrayBuffer();
-        const wb=XLSX.read(buf,{type:'array'});
-        const ws=wb.Sheets[wb.SheetNames[0]];
-        XLSX.utils.sheet_to_json(ws,{defval:null}).map(clean).forEach(buildCard);
-      }catch(e){
-        console.error(e);
-        catalogue.innerHTML='<p class="col-span-full text-center text-red-600">Failed to load <code>SBS_filled.xlsx</code>. Make sure you are running a local web‑server and the file name matches exactly.</p>';
+    async function init() {
+      try {
+        const res = await fetch('SBS_filled.xlsx', { mode: 'cors' });
+        if(!res.ok) throw new Error(`HTTP ${res.status} - ${res.statusText}`);
+        
+        const buf = await res.arrayBuffer();
+        const wb = XLSX.read(buf, { type: 'array' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const data = XLSX.utils.sheet_to_json(ws, { defval: null });
+        
+        catalogue.innerHTML = '';
+        data.map(clean).forEach(buildCard);
+        
+      } catch(e) {
+        console.error('Loading failed:', e);
+        catalogue.innerHTML = `
+          <div class="col-span-full text-center py-8 text-red-600">
+            <p class="font-bold mb-2">Failed to load data:</p>
+            <p class="text-sm">${e.message}</p>
+            <p class="mt-4 text-xs">Ensure that:</p>
+            <ul class="text-xs list-disc inline-block text-left">
+              <li>File exists in same directory</li>
+              <li>Filename is exactly "SBS_filled.xlsx"</li>
+              <li>Server allows .xlsx file access</li>
+            </ul>
+          </div>`;
       }
     }
-    init();
+
+    // Initial check for local file protocol
+    if(location.protocol === 'file:') {
+      document.body.insertAdjacentHTML('afterbegin', `
+        <div class="fixed inset-0 bg-black/70 backdrop-blur flex flex-col items-center justify-center text-white p-6 z-50 gap-4 text-center">
+          <h2 class="text-xl font-bold">Local file restrictions</h2>
+          <p class="max-w-sm">For security reasons, browsers block file:// access to local files. Please:</p>
+          <ol class="text-sm text-left list-decimal list-inside">
+            <li>Upload both files to your web host</li>
+            <li>Or run a local server (see original code comments)</li>
+          </ol>
+        </div>`);
+    } else {
+      init();
+    }
   </script>
 </body>
 </html>

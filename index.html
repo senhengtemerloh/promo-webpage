@@ -3,190 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Appliance Promotions</title>
+    <title>Appliance Deals Unleashed</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Poppins&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #2d3748;
-            --accent: #4a5568;
-            --discount: #c53030;
-            --success: #276749; /* Adjusted for better contrast */
-            --highlight: #fff5f5;
-        }
-
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            padding: 2rem;
-            background: #ffffff;
-            line-height: 1.6;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #2b0a3d, #0a3d2b);
+            color: #f0e68c;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
         }
 
         header {
-            text-align: center;
-            margin-bottom: 2rem;
+            background: rgba(75, 0, 130, 0.8);
+            padding: 2rem 1rem;
+            text-align: right;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
         }
 
-        header h1 {
+        h1 {
+            font-family: 'Orbitron', sans-serif;
             font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
+            color: #ff69b4;
+            margin: 0;
+            text-shadow: 2px 2px 4px #00ced1;
         }
 
-        header p {
-            font-size: 1.2rem;
-            color: var(--accent);
+        .search-bar {
+            padding: 0.8rem;
+            border-radius: 25px;
+            border: 2px solid #00ced1;
+            background: rgba(255, 255, 255, 0.1);
+            color: #f0e68c;
+            width: 250px;
+            font-size: 1rem;
         }
 
-        .container {
-            max-width: 1440px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 2rem;
+        .product-container {
+            padding: 8rem 2rem 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 3rem;
         }
 
         .product-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s, opacity 0.5s, transform 0.5s;
+            width: 280px;
+            background: rgba(0, 206, 209, 0.2);
+            border-radius: 20px;
+            padding: 1.5rem;
+            transform: rotate(5deg);
+            transition: transform 0.4s, box-shadow 0.4s;
             position: relative;
-            opacity: 0;
-            transform: translateY(20px);
+            overflow: hidden;
         }
 
-        .product-card.visible {
-            opacity: 1;
-            transform: translateY(0);
+        .product-card:hover {
+            transform: rotate(0deg) scale(1.1);
+            box-shadow: 0 10px 20px rgba(255, 105, 180, 0.5);
         }
 
         .product-card.special-promo {
-            border: 2px solid var(--discount);
-            background: var(--highlight);
+            background: rgba(255, 105, 180, 0.3);
+            transform: rotate(-5deg);
+            width: 320px;
         }
 
-        .image-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2px;
-            height: 260px;
-            background: #f8f9fa;
-            position: relative;
-        }
-
-        .image-container {
-            position: relative;
+        .image-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
             overflow: hidden;
-            cursor: zoom-in;
-            background: white;
+            margin: 0 auto;
+            border: 3px solid #ff69b4;
+            cursor: pointer;
         }
 
         .product-image {
             width: 100%;
             height: 100%;
-            object-fit: contain;
-            padding: 12px;
-            transition: transform 0.3s;
+            object-fit: cover;
+            transition: opacity 0.3s;
         }
 
-        .image-container:hover .product-image {
-            transform: scale(1.03);
+        .product-card:hover .product-image {
+            opacity: 0.8;
         }
 
-        .capacity-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(0, 0, 0, 0.85);
-            color: white;
-            padding: 6px 14px;
-            border-radius: 18px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .card-content {
-            padding: 1.25rem;
-            flex-grow: 1;
+        .card-info {
+            text-align: center;
+            margin-top: 1rem;
         }
 
         .product-title {
-            font-weight: 700;
-            color: var(--primary);
-            margin: 0 0 1rem 0;
-            font-size: 1.1rem;
-            line-height: 1.3;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: #00ced1;
+            margin: 0;
+            line-height: 1.2;
         }
 
-        .price-stack {
-            margin: 1rem 0;
+        .price-tag {
+            font-size: 1.4rem;
+            color: #ff69b4;
+            margin: 0.5rem 0;
+            font-weight: bold;
         }
 
-        .rcp-price {
-            color: #718096;
-            text-decoration: line-through;
+        .info-box {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 1rem;
+            border-radius: 15px;
             font-size: 0.9rem;
-        }
-
-        .member-price {
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 1.2rem;
-        }
-
-        .special-price {
-            color: var(--discount);
-            font-weight: 800;
-            font-size: 1.5rem;
             margin-top: 0.5rem;
+            display: none;
         }
 
-        .badge-group {
-            display: flex;
-            gap: 8px;
-            margin: 1.25rem 0;
-            flex-wrap: wrap;
+        .product-card:hover .info-box {
+            display: block;
         }
 
-        .voucher-badge {
-            background: var(--discount);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 0.85rem;
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            margin: 0.2rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
         }
 
-        .s-coin-badge {
-            background: var(--success);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 0.85rem;
+        .voucher {
+            background: #ff4500;
         }
 
-        .remarks-banner {
-            background: var(--discount);
-            color: white;
-            padding: 8px 16px;
-            text-align: center;
-            margin: 1rem 0;
-            border-radius: 4px;
-            font-weight: 500;
+        .s-coin {
+            background: #32cd32;
         }
 
-        .footer-info {
-            border-top: 1px solid #e2e8f0;
-            padding: 1rem 1.25rem;
-            margin-top: auto;
-        }
-
-        .model-code {
-            color: var(--accent); /* Changed for better contrast */
-            font-size: 0.75rem;
-            text-align: right;
+        .model-label {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f0e68c;
+            color: #2b0a3d;
+            padding: 0.3rem 1rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
         }
 
         .modal {
@@ -197,68 +164,86 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.95);
-            justify-content: center;
             align-items: center;
-            z-index: 1000;
+            justify-content: center;
+            z-index: 200;
+            opacity: 0;
+            transition: opacity 0.5s;
         }
 
-        .modal-visible {
+        .modal.active {
             display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            position: relative;
+            text-align: center;
         }
 
         .modal-image {
             max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-            border-radius: 8px;
+            max-height: 70vh;
+            border-radius: 10px;
+            border: 4px solid #ff69b4;
         }
 
-        .close-btn {
-            position: absolute;
-            top: 24px;
-            right: 24px;
-            color: white;
-            font-size: 2rem;
-            cursor: pointer;
-            background: none;
-            border: none;
+        .modal-caption {
+            margin-top: 1rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: #00ced1;
         }
 
-        .modal-nav {
+        .nav-arrow {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
+            background: none;
             border: none;
-            padding: 1rem;
+            color: #ff69b4;
+            font-size: 3rem;
             cursor: pointer;
-            font-size: 1.5rem;
-            z-index: 1001;
         }
 
-        .prev {
-            left: 1rem;
+        .prev-arrow {
+            left: 20px;
         }
 
-        .next {
-            right: 1rem;
+        .next-arrow {
+            right: 20px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #ff4500;
+            border: none;
+            color: #fff;
+            font-size: 2rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Premium Appliance Promotions</h1>
-        <p>Discover our exclusive offers on high-end appliances</p>
+        <h1>Appliance Deals Unleashed</h1>
+        <input type="search" class="search-bar" placeholder="Find Your Deal...">
     </header>
-    <div class="container" id="container"></div>
+    <section class="product-container" id="productContainer"></section>
 
-    <!-- Image Modal -->
     <div class="modal" id="imageModal">
-        <button class="close-btn" onclick="closeModal()">×</button>
-        <button class="modal-nav prev">←</button>
-        <button class="modal-nav next">→</button>
-        <img class="modal-image" id="modalImage">
+        <button class="close-modal" onclick="hideModal()">X</button>
+        <button class="nav-arrow prev-arrow">❮</button>
+        <div class="modal-content">
+            <img class="modal-image" id="modalImage">
+            <div class="modal-caption" id="modalCaption"></div>
+        </div>
+        <button class="nav-arrow next-arrow">❯</button>
     </div>
 
     <script>
@@ -269,7 +254,7 @@
             return Number(price).toLocaleString('en-US');
         }
 
-        async function loadExcelData() {
+        async function fetchProducts() {
             try {
                 const response = await fetch('data.xlsx');
                 const arrayBuffer = await response.arrayBuffer();
@@ -291,132 +276,102 @@
                     remarks: row[10]
                 }));
 
-                renderProducts(products);
-
-                // Add event listener for image clicks
-                const container = document.getElementById('container');
-                container.addEventListener('click', (e) => {
-                    if (e.target.classList.contains('product-image')) {
-                        const productCard = e.target.closest('.product-card');
-                        const images = Array.from(productCard.querySelectorAll('.product-image')).map(img => img.src);
-                        const clickedIndex = images.indexOf(e.target.src);
-                        showModal(images, clickedIndex);
-                    }
-                });
-
-                // Add animation to product cards
-                setTimeout(() => {
-                    document.querySelectorAll('.product-card').forEach(card => card.classList.add('visible'));
-                }, 100);
+                displayProducts(products);
             } catch (error) {
-                console.error('Error loading data:', error);
+                console.error('Error fetching data:', error);
             }
         }
 
-        function renderProducts(products) {
-            const container = document.getElementById('container');
-            
+        function displayProducts(products) {
+            const container = document.getElementById('productContainer');
+
             products.forEach(product => {
                 const hasSpecial = product.special && product.special !== '';
                 const hasVoucher = product.voucher && product.voucher !== 0;
                 const hasRemarks = product.remarks && product.remarks !== '';
                 const isSpecialPromo = hasSpecial && hasRemarks;
-                
+
                 const card = document.createElement('div');
-                card.className = `product-card${isSpecialPromo ? ' special-promo' : ''}`;
-
+                card.className = `product-card ${isSpecialPromo ? 'special-promo' : ''}`;
                 card.innerHTML = `
-                    <div class="image-grid">
-                        <div class="image-container">
-                            <img class="product-image" src="${product.image1}" alt="${product.name}">
-                        </div>
-                        <div class="image-container">
-                            <img class="product-image" src="${product.image2}" alt="${product.name}">
-                        </div>
-                        <div class="capacity-badge">${product.capacity}</div>
+                    <div class="image-circle">
+                        <img class="product-image" src="${product.image1}" data-second="${product.image2}" alt="${product.name}">
                     </div>
-
-                    <div class="card-content">
-                        ${hasRemarks ? `
-                            <div class="remarks-banner">${product.remarks}</div>
-                        ` : ''}
-
-                        <h3 class="product-title">${product.name}</h3>
-
-                        <div class="price-stack">
-                            <div class="rcp-price">RM ${formatPrice(product.rcp)}</div>
-                            ${hasSpecial ? `
-                                <div class="member-price">Member: RM ${formatPrice(product.memberPrice)}</div>
-                                <div class="special-price">Special: RM ${formatPrice(product.special)}</div>
-                            ` : `
-                                <div class="member-price">Member: RM ${formatPrice(product.memberPrice)}</div>
-                            `}
+                    <div class="card-info">
+                        <h2 class="product-title">${product.name}</h2>
+                        <p class="price-tag">${hasSpecial ? `RM ${formatPrice(product.special)}` : `RM ${formatPrice(product.memberPrice)}`}</p>
+                        <div class="info-box">
+                            <p>Capacity: ${product.capacity}</p>
+                            <p>RCP: RM ${formatPrice(product.rcp)}</p>
+                            <p>Member: RM ${formatPrice(product.memberPrice)}</p>
+                            ${hasSpecial ? `<p>Special: RM ${formatPrice(product.special)}</p>` : ''}
+                            ${hasVoucher || product.sCoin ? `
+                                <div>
+                                    ${hasVoucher ? `<span class="badge voucher">Save RM ${formatPrice(product.voucher)}</span>` : ''}
+                                    ${product.sCoin ? `<span class="badge s-coin">S-Coin ${product.sCoin * 100}%</span>` : ''}
+                                </div>` : ''}
+                            ${hasRemarks ? `<p>${product.remarks}</p>` : ''}
                         </div>
-
-                        ${hasVoucher || product.sCoin ? `
-                            <div class="badge-group">
-                                ${hasVoucher ? `
-                                    <div class="voucher-badge">Instant Save RM ${formatPrice(product.voucher)}</div>
-                                ` : ''}
-                                ${product.sCoin ? `
-                                    <div class="s-coin-badge">S-Coin ${product.sCoin * 100}%</div>
-                                ` : ''}
-                            </div>
-                        ` : ''}
                     </div>
-
-                    <div class="footer-info">
-                        <div class="model-code">${product.model}</div>
-                    </div>
+                    <span class="model-label">${product.model}</span>
                 `;
-
                 container.appendChild(card);
+            });
+
+            // Image hover and click events
+            document.querySelectorAll('.product-image').forEach(img => {
+                img.addEventListener('mouseenter', () => {
+                    img.setAttribute('data-first', img.src);
+                    img.src = img.getAttribute('data-second');
+                });
+                img.addEventListener('mouseleave', () => {
+                    img.src = img.getAttribute('data-first');
+                });
+                img.addEventListener('click', () => {
+                    const firstImg = img.getAttribute('data-first') || img.getAttribute('src');
+                    const secondImg = img.getAttribute('data-second');
+                    const images = [firstImg, secondImg];
+                    const card = img.closest('.product-card');
+                    const name = card.querySelector('.product-title').textContent;
+                    const model = card.querySelector('.model-label').textContent;
+                    showModal(images, img.src === secondImg ? 1 : 0, name, model);
+                });
             });
         }
 
-        function showModal(images, startIndex) {
+        function showModal(images, startIndex, name, model) {
             currentImages = images;
             currentIndex = startIndex;
             const modal = document.getElementById('imageModal');
             const modalImg = document.getElementById('modalImage');
+            const caption = document.getElementById('modalCaption');
             modalImg.src = currentImages[currentIndex];
-            modal.classList.add('modal-visible');
+            caption.textContent = `${name} | ${model}`;
+            modal.classList.add('active');
 
-            const prevBtn = modal.querySelector('.prev');
-            const nextBtn = modal.querySelector('.next');
-
-            prevBtn.onclick = () => {
+            const prev = modal.querySelector('.prev-arrow');
+            const next = modal.querySelector('.next-arrow');
+            prev.onclick = () => {
                 currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
                 modalImg.src = currentImages[currentIndex];
             };
-
-            nextBtn.onclick = () => {
+            next.onclick = () => {
                 currentIndex = (currentIndex + 1) % currentImages.length;
                 modalImg.src = currentImages[currentIndex];
             };
         }
 
-        function closeModal() {
-            document.getElementById('imageModal').classList.remove('modal-visible');
+        function hideModal() {
+            document.getElementById('imageModal').classList.remove('active');
         }
 
-        // Keyboard navigation for modal
-        document.addEventListener('keydown', (e) => {
-            const modal = document.getElementById('imageModal');
-            if (modal.classList.contains('modal-visible')) {
-                if (e.key === 'ArrowLeft') {
-                    currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
-                    document.getElementById('modalImage').src = currentImages[currentIndex];
-                } else if (e.key === 'ArrowRight') {
-                    currentIndex = (currentIndex + 1) % currentImages.length;
-                    document.getElementById('modalImage').src = currentImages[currentIndex];
-                } else if (e.key === 'Escape') {
-                    closeModal();
-                }
+        window.addEventListener('click', (e) => {
+            if (e.target === document.getElementById('imageModal')) {
+                hideModal();
             }
         });
 
-        window.addEventListener('DOMContentLoaded', loadExcelData);
+        window.addEventListener('DOMContentLoaded', fetchProducts);
     </script>
 </body>
 </html>

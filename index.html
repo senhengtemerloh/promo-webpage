@@ -65,10 +65,10 @@
             grid-template-columns: 1fr 1fr;
             gap: 2px;
             background: var(--image-bg);
+            position: relative; /* for capacity badge */
         }
 
         .image-container {
-            position: relative;
             overflow: hidden;
             aspect-ratio: 1 / 1;
             background: var(--image-bg);
@@ -96,6 +96,7 @@
             border-radius: 8px;
             font-size: 0.85rem;
             font-weight: 600;
+            z-index: 1;
         }
 
         .card-content {
@@ -167,7 +168,6 @@
 
         .s-coin-badge {
             background: var(--success);
-            color: #fff;
         }
 
         .footer-info {
@@ -271,14 +271,9 @@
 
                 card.innerHTML = `
                     <div class="image-grid">
-                        <div class="image-container">
-                            <img class="product-image" src="${product.image1}" alt="${product.name}">
-                            <div class="capacity-badge">${product.capacity}</div>
-                        </div>
-                        <div class="image-container">
-                            <img class="product-image" src="${product.image2}" alt="${product.name}">
-                            <div class="capacity-badge">${product.capacity}</div>
-                        </div>
+                        <div class="image-container"><img class="product-image" src="${product.image1}" alt="${product.name}"></div>
+                        <div class="image-container"><img class="product-image" src="${product.image2}" alt="${product.name}"></div>
+                        <div class="capacity-badge">${product.capacity}</div>
                     </div>
 
                     <div class="card-content">
@@ -297,9 +292,7 @@
                         ` : ''}
                     </div>
 
-                    <div class="footer-info">
-                        ${product.model}
-                    </div>
+                    <div class="footer-info">${product.model}</div>
                 `;
 
                 container.appendChild(card);

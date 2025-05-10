@@ -20,307 +20,90 @@
             --text: #2d3748;
             --text-secondary: #718096;
         }
-
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Poppins', sans-serif;
-            padding: 1.5rem;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .product-card {
-            background: var(--surface);
-            border-radius: 12px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid var(--highlight);
-            transition: transform 0.2s;
-        }
-
-        .product-card:hover {
-            transform: translateY(-4px);
-        }
-
-        .product-card.special-promo {
-            border-color: var(--discount);
-        }
-
-        .image-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2px;
-            background: var(--image-bg);
-            position: relative; /* for capacity badge */
-        }
-
-        .image-container {
-            overflow: hidden;
-            aspect-ratio: 1 / 1;
-            background: var(--image-bg);
-            cursor: zoom-in;
-        }
-
-        .product-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s;
-        }
-
-        .image-container:hover .product-image {
-            transform: scale(1.05);
-        }
-
-        .capacity-badge {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: var(--primary);
-            color: #fff;
-            padding: 4px 8px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            z-index: 1;
-        }
-
-        .card-content {
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .remarks-banner {
-            background: var(--discount);
-            color: #fff;
-            padding: 0.5rem;
-            text-align: center;
-            font-weight: 600;
-            border-radius: 0 0 8px 8px;
-            margin-bottom: 1rem;
-        }
-
-        .product-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-            color: var(--primary);
-        }
-
-        .price-stack {
-            margin-bottom: 1rem;
-        }
-
-        .rcp-price {
-            color: var(--text-secondary);
-            text-decoration: line-through;
-            font-size: 0.9rem;
-        }
-
-        .member-price {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--text);
-            margin-top: 0.25rem;
-        }
-
-        .special-price {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--discount);
-            margin-top: 0.5rem;
-        }
-
-        .badge-group {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            margin-top: auto;
-        }
-
-        .voucher-badge, .s-coin-badge {
-            font-size: 0.85rem;
-            font-weight: 600;
-            padding: 6px 12px;
-            border-radius: 8px;
-            color: #fff;
-        }
-
-        .voucher-badge {
-            background: var(--discount);
-        }
-
-        .s-coin-badge {
-            background: var(--success);
-        }
-
-        .footer-info {
-            border-top: 1px solid var(--highlight);
-            padding: 0.75rem 1rem;
-            text-align: right;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.6);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-visible {
-            display: flex;
-        }
-
-        .modal-image {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 2rem;
-            cursor: pointer;
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--bg); color: var(--text); font-family: 'Poppins', sans-serif; padding: 1.5rem; }
+        .container { max-width: 1200px; margin: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        .product-card { background: var(--surface); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid var(--highlight); transition: transform 0.2s; }
+        .product-card:hover { transform: translateY(-4px); }
+        .product-card.special-promo { border-color: var(--discount); }
+        .image-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--image-bg); position: relative; }
+        .image-container { overflow: hidden; aspect-ratio: 1 / 1; background: var(--image-bg); cursor: zoom-in; }
+        .product-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .image-container:hover .product-image { transform: scale(1.05); }
+        .capacity-badge { position: absolute; top: 8px; right: 8px; background: var(--primary); color: #fff; padding: 4px 8px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; z-index: 1; }
+        .card-content { padding: 1rem; display: flex; flex-direction: column; flex-grow: 1; }
+        .product-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--primary); }
+        .price-stack { margin-bottom: 1rem; }
+        .rcp-price { color: var(--text-secondary); text-decoration: line-through; font-size: 0.9rem; }
+        .member-price { font-size: 1.2rem; font-weight: 600; color: var(--text); margin-top: 0.25rem; }
+        .special-price { font-size: 1.4rem; font-weight: 700; color: var(--discount); margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .voucher-inline { background: var(--discount); color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; font-weight: 600; }
+        .promo-duration { font-size: 0.85rem; color: var(--accent); margin-top: 4px; }
+        .badge-group { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: auto; }
+        .s-coin-badge { font-size: 0.85rem; font-weight: 600; padding: 6px 12px; border-radius: 8px; background: var(--success); color: #fff; }
+        .footer-info { border-top: 1px solid var(--highlight); padding: 0.75rem 1rem; text-align: right; font-size: 0.75rem; color: var(--text-secondary); }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-visible { display: flex; }
+        .modal-image { max-width: 90%; max-height: 90%; object-fit: contain; }
+        .close-btn { position: absolute; top: 16px; right: 16px; background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer; }
     </style>
 </head>
 <body>
     <div class="container" id="container"></div>
-
-    <!-- Image Modal -->
     <div class="modal" id="imageModal">
         <button class="close-btn" onclick="closeModal()">&times;</button>
         <img class="modal-image" id="modalImage" alt="Product Image">
     </div>
-
     <script>
-        function formatPrice(price) {
-            return Number(price).toLocaleString('en-US');
-        }
-
+        function formatPrice(price) { return Number(price).toLocaleString('en-US'); }
         async function loadExcelData() {
             try {
                 const response = await fetch('data.xlsx');
-                const arrayBuffer = await response.arrayBuffer();
-                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-                const products = data.slice(1).map(row => ({
-                    model: row[0],
-                    name: row[1],
-                    rcp: row[2],
-                    memberPrice: row[3],
-                    special: row[4],
-                    sCoin: row[5],
-                    voucher: row[6],
-                    capacity: row[7],
-                    image1: row[8],
-                    image2: row[9],
-                    remarks: row[10]
-                }));
-
-                renderProducts(products);
-                initImageModals();
-            } catch (error) {
-                console.error('Error loading data:', error);
-            }
+                const buffer = await response.arrayBuffer();
+                const wb = XLSX.read(buffer, { type: 'array' });
+                const sheet = wb.Sheets[wb.SheetNames[0]];
+                const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 }).slice(1);
+                const products = rows.map(r => ({ model:r[0], name:r[1], rcp:r[2], memberPrice:r[3], special:r[4], sCoin:r[5], voucher:r[6], capacity:r[7], image1:r[8], image2:r[9], remarks:r[10] }));
+                renderProducts(products); initImageModals();
+            } catch(e) { console.error(e); }
         }
-
         function renderProducts(products) {
-            const container = document.getElementById('container');
-
-            products.forEach(product => {
-                const hasSpecial = product.special;
-                const hasVoucher = product.voucher;
-                const hasRemarks = product.remarks;
-                const isSpecialPromo = hasSpecial && hasRemarks;
-
+            const cont = document.getElementById('container');
+            products.forEach(p => {
                 const card = document.createElement('div');
-                card.className = `product-card${isSpecialPromo ? ' special-promo' : ''}`;
-
+                if(p.special && p.remarks) card.className = 'product-card special-promo'; else card.className='product-card';
+                let voucherHTML = '';
+                if(p.voucher) voucherHTML = `<span class="voucher-inline">Instant Save RM ${formatPrice(p.voucher)}</span>`;
                 card.innerHTML = `
                     <div class="image-grid">
-                        <div class="image-container"><img class="product-image" src="${product.image1}" alt="${product.name}"></div>
-                        <div class="image-container"><img class="product-image" src="${product.image2}" alt="${product.name}"></div>
-                        <div class="capacity-badge">${product.capacity}</div>
+                        <div class="image-container"><img class="product-image" src="${p.image1}" alt="${p.name}"></div>
+                        <div class="image-container"><img class="product-image" src="${p.image2}" alt="${p.name}"></div>
+                        <div class="capacity-badge">${p.capacity}</div>
                     </div>
-
                     <div class="card-content">
-                        ${hasRemarks ? `<div class="remarks-banner">${product.remarks}</div>` : ''}
-                        <h3 class="product-title">${product.name}</h3>
+                        <h3 class="product-title">${p.name}</h3>
                         <div class="price-stack">
-                            <div class="rcp-price">RM ${formatPrice(product.rcp)}</div>
-                            <div class="member-price">Member: RM ${formatPrice(product.memberPrice)}</div>
-                            ${hasSpecial ? `<div class="special-price">Special: RM ${formatPrice(product.special)}</div>` : ''}
+                            <div class="rcp-price">RM ${formatPrice(p.rcp)}</div>
+                            <div class="member-price">Member: RM ${formatPrice(p.memberPrice)}</div>
+                            ${p.special?`<div class="special-price">Special: RM ${formatPrice(p.special)} ${voucherHTML}</div>`:''}
+                            ${p.remarks?`<div class="promo-duration">${p.remarks}</div>`:''}
                         </div>
-                        ${(hasVoucher || product.sCoin) ? `
-                            <div class="badge-group">
-                                ${hasVoucher ? `<div class="voucher-badge">Save RM ${formatPrice(product.voucher)}</div>` : ''}
-                                ${product.sCoin ? `<div class="s-coin-badge">S-Coin ${product.sCoin * 100}%</div>` : ''}
-                            </div>
-                        ` : ''}
+                        ${p.sCoin?`<div class="badge-group"><div class="s-coin-badge">S-Coin ${p.sCoin*100}%</div></div>`:''}
                     </div>
-
-                    <div class="footer-info">${product.model}</div>
+                    <div class="footer-info">${p.model}</div>
                 `;
-
-                container.appendChild(card);
+                cont.appendChild(card);
             });
         }
-
         function initImageModals() {
-            document.querySelectorAll('.image-container').forEach(container => {
-                container.addEventListener('click', () => {
-                    const img = container.querySelector('img');
-                    const modal = document.getElementById('imageModal');
-                    const modalImg = document.getElementById('modalImage');
-                    modalImg.src = img.src;
-                    modal.classList.add('modal-visible');
-                });
-            });
+            document.querySelectorAll('.image-container').forEach(c=>c.addEventListener('click',()=>{
+                const img=c.querySelector('img'), m=document.getElementById('imageModal'), mid=document.getElementById('modalImage');
+                mid.src=img.src; m.classList.add('modal-visible');
+            }));
         }
-
-        function closeModal() {
-            document.getElementById('imageModal').classList.remove('modal-visible');
-        }
-
-        window.addEventListener('click', event => {
-            const modal = document.getElementById('imageModal');
-            if (event.target === modal) closeModal();
-        });
-
-        window.addEventListener('DOMContentLoaded', loadExcelData);
+        function closeModal(){document.getElementById('imageModal').classList.remove('modal-visible');}
+        window.addEventListener('click',e=>{if(e.target.id==='imageModal')closeModal();});
+        window.addEventListener('DOMContentLoaded',loadExcelData);
     </script>
 </body>
 </html>

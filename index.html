@@ -3,159 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Appliance Deals Unleashed</title>
+    <title>Premium Appliance Promotions</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron&family=Poppins&display=swap" rel="stylesheet">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #2b0a3d, #0a3d2b);
-            color: #f0e68c;
+        :root {
+            --bg: #121212;
+            --surface: #1e1e1e;
+            --primary: #bb86fc;
+            --accent: #03dac6;
+            --discount: #cf6679;
+            --success: #03dac6;
+            --highlight: rgba(255, 255, 255, 0.05);
+            --text: #e0e0e0;
+            --text-secondary: #a0a0a0;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            overflow-x: hidden;
         }
 
-        header {
-            background: rgba(75, 0, 130, 0.8);
-            padding: 2rem 1rem;
-            text-align: right;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 100;
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            padding: 2rem;
         }
 
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.5rem;
-            color: #ff69b4;
-            margin: 0;
-            text-shadow: 2px 2px 4px #00ced1;
-        }
-
-        .search-bar {
-            padding: 0.8rem;
-            border-radius: 25px;
-            border: 2px solid #00ced1;
-            background: rgba(255, 255, 255, 0.1);
-            color: #f0e68c;
-            width: 250px;
-            font-size: 1rem;
-        }
-
-        .product-container {
-            padding: 8rem 2rem 2rem;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 3rem;
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
         }
 
         .product-card {
-            width: 280px;
-            background: rgba(0, 206, 209, 0.2);
-            border-radius: 20px;
-            padding: 1.5rem;
-            transform: rotate(5deg);
-            transition: transform 0.4s, box-shadow 0.4s;
-            position: relative;
+            background: var(--surface);
+            border-radius: 12px;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s, box-shadow 0.3s;
         }
 
         .product-card:hover {
-            transform: rotate(0deg) scale(1.1);
-            box-shadow: 0 10px 20px rgba(255, 105, 180, 0.5);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.7);
         }
 
         .product-card.special-promo {
-            background: rgba(255, 105, 180, 0.3);
-            transform: rotate(-5deg);
-            width: 320px;
+            border: 2px solid var(--discount);
         }
 
-        .image-circle {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
+        .image-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+            height: 200px;
+            background: var(--highlight);
+        }
+
+        .image-container {
+            position: relative;
             overflow: hidden;
-            margin: 0 auto;
-            border: 3px solid #ff69b4;
-            cursor: pointer;
+            cursor: zoom-in;
+            background: var(--surface);
         }
 
         .product-image {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            transition: opacity 0.3s;
+            object-fit: contain;
+            transition: transform 0.3s;
         }
 
-        .product-card:hover .product-image {
-            opacity: 0.8;
+        .image-container:hover .product-image {
+            transform: scale(1.05);
         }
 
-        .card-info {
+        .capacity-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: var(--primary);
+            color: var(--bg);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .card-content {
+            padding: 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .remarks-banner {
+            background: var(--discount);
+            color: var(--text);
+            padding: 0.75rem;
             text-align: center;
-            margin-top: 1rem;
+            font-weight: 600;
+            border-radius: 0 0 8px 8px;
+            margin-bottom: 1rem;
         }
 
         .product-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
-            color: #00ced1;
-            margin: 0;
-            line-height: 1.2;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
         }
 
-        .price-tag {
-            font-size: 1.4rem;
-            color: #ff69b4;
-            margin: 0.5rem 0;
-            font-weight: bold;
+        .price-stack {
+            margin-bottom: 1rem;
         }
 
-        .info-box {
-            background: rgba(0, 0, 0, 0.5);
-            padding: 1rem;
-            border-radius: 15px;
+        .rcp-price {
+            color: var(--text-secondary);
+            text-decoration: line-through;
             font-size: 0.9rem;
+        }
+
+        .member-price {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-top: 0.25rem;
+        }
+
+        .special-price {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--discount);
             margin-top: 0.5rem;
-            display: none;
         }
 
-        .product-card:hover .info-box {
-            display: block;
+        .badge-group {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: auto;
         }
 
-        .badge {
-            display: inline-block;
-            padding: 0.3rem 0.8rem;
-            margin: 0.2rem;
-            border-radius: 12px;
-            font-size: 0.8rem;
+        .voucher-badge,
+        .s-coin-badge {
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 8px;
         }
 
-        .voucher {
-            background: #ff4500;
+        .voucher-badge {
+            background: var(--discount);
+            color: var(--text);
         }
 
-        .s-coin {
-            background: #32cd32;
+        .s-coin-badge {
+            background: var(--success);
+            color: var(--bg);
         }
 
-        .model-label {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #f0e68c;
-            color: #2b0a3d;
-            padding: 0.3rem 1rem;
-            border-radius: 10px;
-            font-size: 0.7rem;
+        .footer-info {
+            border-top: 1px solid var(--highlight);
+            padding: 0.75rem;
+            text-align: right;
         }
 
+        .model-code {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -163,104 +191,56 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            align-items: center;
+            background: rgba(0, 0, 0, 0.85);
             justify-content: center;
-            z-index: 200;
-            opacity: 0;
-            transition: opacity 0.5s;
+            align-items: center;
+            z-index: 1000;
         }
 
-        .modal.active {
+        .modal-visible {
             display: flex;
-            opacity: 1;
-        }
-
-        .modal-content {
-            position: relative;
-            text-align: center;
         }
 
         .modal-image {
             max-width: 90%;
-            max-height: 70vh;
-            border-radius: 10px;
-            border: 4px solid #ff69b4;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 8px;
         }
 
-        .modal-caption {
-            margin-top: 1rem;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
-            color: #00ced1;
-        }
-
-        .nav-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #ff69b4;
-            font-size: 3rem;
-            cursor: pointer;
-        }
-
-        .prev-arrow {
-            left: 20px;
-        }
-
-        .next-arrow {
-            right: 20px;
-        }
-
-        .close-modal {
+        .close-btn {
             position: absolute;
             top: 20px;
-            left: 20px;
-            background: #ff4500;
+            right: 20px;
+            background: none;
             border: none;
-            color: #fff;
-            font-size: 2rem;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            color: var(--text);
+            font-size: 1.5rem;
             cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Appliance Deals Unleashed</h1>
-        <input type="search" class="search-bar" placeholder="Find Your Deal...">
-    </header>
-    <section class="product-container" id="productContainer"></section>
+    <div class="container" id="container"></div>
 
+    <!-- Image Modal -->
     <div class="modal" id="imageModal">
-        <button class="close-modal" onclick="hideModal()">X</button>
-        <button class="nav-arrow prev-arrow">❮</button>
-        <div class="modal-content">
-            <img class="modal-image" id="modalImage">
-            <div class="modal-caption" id="modalCaption"></div>
-        </div>
-        <button class="nav-arrow next-arrow">❯</button>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+        <img class="modal-image" id="modalImage">
     </div>
 
     <script>
-        let currentImages = [];
-        let currentIndex = 0;
-
         function formatPrice(price) {
             return Number(price).toLocaleString('en-US');
         }
 
-        async function fetchProducts() {
+        async function loadExcelData() {
             try {
                 const response = await fetch('data.xlsx');
                 const arrayBuffer = await response.arrayBuffer();
-                const workbook = XLSX.read(arrayBuffer, {type: 'array'});
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
                 const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                const data = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+                const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
                 const products = data.slice(1).map(row => ({
                     model: row[0],
@@ -276,14 +256,15 @@
                     remarks: row[10]
                 }));
 
-                displayProducts(products);
+                renderProducts(products);
+                initImageModals();
             } catch (error) {
-                console.error('Error fetching data:', error);
+                console.error('Error loading data:', error);
             }
         }
 
-        function displayProducts(products) {
-            const container = document.getElementById('productContainer');
+        function renderProducts(products) {
+            const container = document.getElementById('container');
 
             products.forEach(product => {
                 const hasSpecial = product.special && product.special !== '';
@@ -292,86 +273,72 @@
                 const isSpecialPromo = hasSpecial && hasRemarks;
 
                 const card = document.createElement('div');
-                card.className = `product-card ${isSpecialPromo ? 'special-promo' : ''}`;
+                card.className = `product-card${isSpecialPromo ? ' special-promo' : ''}`;
+
                 card.innerHTML = `
-                    <div class="image-circle">
-                        <img class="product-image" src="${product.image1}" data-second="${product.image2}" alt="${product.name}">
-                    </div>
-                    <div class="card-info">
-                        <h2 class="product-title">${product.name}</h2>
-                        <p class="price-tag">${hasSpecial ? `RM ${formatPrice(product.special)}` : `RM ${formatPrice(product.memberPrice)}`}</p>
-                        <div class="info-box">
-                            <p>Capacity: ${product.capacity}</p>
-                            <p>RCP: RM ${formatPrice(product.rcp)}</p>
-                            <p>Member: RM ${formatPrice(product.memberPrice)}</p>
-                            ${hasSpecial ? `<p>Special: RM ${formatPrice(product.special)}</p>` : ''}
-                            ${hasVoucher || product.sCoin ? `
-                                <div>
-                                    ${hasVoucher ? `<span class="badge voucher">Save RM ${formatPrice(product.voucher)}</span>` : ''}
-                                    ${product.sCoin ? `<span class="badge s-coin">S-Coin ${product.sCoin * 100}%</span>` : ''}
-                                </div>` : ''}
-                            ${hasRemarks ? `<p>${product.remarks}</p>` : ''}
+                    <div class="image-grid">
+                        <div class="image-container">
+                            <img class="product-image" src="${product.image1}" alt="${product.name}">
                         </div>
+                        <div class="image-container">
+                            <img class="product-image" src="${product.image2}" alt="${product.name}">
+                        </div>
+                        <div class="capacity-badge">${product.capacity}</div>
                     </div>
-                    <span class="model-label">${product.model}</span>
+
+                    <div class="card-content">
+                        ${hasRemarks ? `<div class="remarks-banner">${product.remarks}</div>` : ''}
+                        <h3 class="product-title">${product.name}</h3>
+                        <div class="price-stack">
+                            <div class="rcp-price">RM ${formatPrice(product.rcp)}</div>
+                            ${hasSpecial ? `
+                                <div class="member-price">Member: RM ${formatPrice(product.memberPrice)}</div>
+                                <div class="special-price">Special: RM ${formatPrice(product.special)}</div>
+                            ` : `
+                                <div class="member-price">Member: RM ${formatPrice(product.memberPrice)}</div>
+                            `}
+                        </div>
+                        ${(hasVoucher || product.sCoin) ? `
+                            <div class="badge-group">
+                                ${hasVoucher ? `<div class="voucher-badge">Instant Save RM ${formatPrice(product.voucher)}</div>` : ''}
+                                ${product.sCoin ? `<div class="s-coin-badge">S-Coin ${product.sCoin * 100}%</div>` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="footer-info">
+                        <div class="model-code">${product.model}</div>
+                    </div>
                 `;
+
                 container.appendChild(card);
             });
+        }
 
-            // Image hover and click events
-            document.querySelectorAll('.product-image').forEach(img => {
-                img.addEventListener('mouseenter', () => {
-                    img.setAttribute('data-first', img.src);
-                    img.src = img.getAttribute('data-second');
-                });
-                img.addEventListener('mouseleave', () => {
-                    img.src = img.getAttribute('data-first');
-                });
-                img.addEventListener('click', () => {
-                    const firstImg = img.getAttribute('data-first') || img.getAttribute('src');
-                    const secondImg = img.getAttribute('data-second');
-                    const images = [firstImg, secondImg];
-                    const card = img.closest('.product-card');
-                    const name = card.querySelector('.product-title').textContent;
-                    const model = card.querySelector('.model-label').textContent;
-                    showModal(images, img.src === secondImg ? 1 : 0, name, model);
+        function initImageModals() {
+            document.querySelectorAll('.image-container').forEach(container => {
+                container.addEventListener('click', (e) => {
+                    const imgSrc = e.target.src;
+                    const modal = document.getElementById('imageModal');
+                    const modalImg = document.getElementById('modalImage');
+                    modal.classList.add('modal-visible');
+                    modalImg.src = imgSrc;
                 });
             });
         }
 
-        function showModal(images, startIndex, name, model) {
-            currentImages = images;
-            currentIndex = startIndex;
+        function closeModal() {
+            document.getElementById('imageModal').classList.remove('modal-visible');
+        }
+
+        window.onclick = function(event) {
             const modal = document.getElementById('imageModal');
-            const modalImg = document.getElementById('modalImage');
-            const caption = document.getElementById('modalCaption');
-            modalImg.src = currentImages[currentIndex];
-            caption.textContent = `${name} | ${model}`;
-            modal.classList.add('active');
-
-            const prev = modal.querySelector('.prev-arrow');
-            const next = modal.querySelector('.next-arrow');
-            prev.onclick = () => {
-                currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
-                modalImg.src = currentImages[currentIndex];
-            };
-            next.onclick = () => {
-                currentIndex = (currentIndex + 1) % currentImages.length;
-                modalImg.src = currentImages[currentIndex];
-            };
-        }
-
-        function hideModal() {
-            document.getElementById('imageModal').classList.remove('active');
-        }
-
-        window.addEventListener('click', (e) => {
-            if (e.target === document.getElementById('imageModal')) {
-                hideModal();
+            if (event.target === modal) {
+                closeModal();
             }
-        });
+        }
 
-        window.addEventListener('DOMContentLoaded', fetchProducts);
+        window.addEventListener('DOMContentLoaded', loadExcelData);
     </script>
 </body>
 </html>

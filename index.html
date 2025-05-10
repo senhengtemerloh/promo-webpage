@@ -57,14 +57,13 @@ function buildCard(p){
 }
 
 async function loadXLSX(){
-  const url='SBS_filled.xlsx';
+  const url='data.xlsx'; // <-- changed file name
   log('Fetching',url);
   const res=await fetch(url);
   if(!res.ok) throw new Error('HTTP '+res.status);
   const buf=await res.arrayBuffer();
   log('Fetched',buf.byteLength,'bytes');
-  const data=new Uint8Array(buf);
-  const wb=XLSX.read(data,{type:'array'});
+  const wb=XLSX.read(new Uint8Array(buf),{type:'array'});
   const ws=wb.Sheets[wb.SheetNames[0]];
   const rows=XLSX.utils.sheet_to_json(ws,{defval:null});
   log('Rows',rows.length);
@@ -75,13 +74,14 @@ async function loadXLSX(){
   try{ await loadXLSX(); }
   catch(err){
     console.error(err);
+    const base=location.origin+location.pathname.replace(/\/[^/]*$/,'/');
     document.getElementById('catalogue').innerHTML=`<div class="col-span-full text-center text-red-600 space-y-2">
-      <p class="font-semibold">Failed to load <code>SBS_filled.xlsx</code>.</p>
+      <p class="font-semibold">Failed to load <code>data.xlsx</code>.</p>
       <p class="text-sm">Troubleshooting tips:</p>
       <ul class="text-xs list-disc list-inside text-left max-w-xs mx-auto">
-        <li>Ensure the file name and <strong>case</strong> match exactly (e.g. <code>SBS_filled.xlsx</code> vs <code>SBS_Filled.xlsx</code>).</li>
+        <li>Ensure the file name and <strong>case</strong> match exactly (<code>data.xlsx</code>).</li>
         <li>Verify the file is committed to GitHub on the <code>gh-pages</code> branch.</li>
-        <li>Open <code>${location.origin+location.pathname.replace(/\/[^/]*$/,'/') }SBS_filled.xlsx</code> directly in the browser – it should download.</li>
+        <li>Open <code>${base}data.xlsx</code> directly in the browser – it should download.</li>
         <li>If Git LFS is enabled or the file is &gt;100&nbsp;MB, GitHub Pages won’t serve it.</li>
       </ul>
     </div>`;

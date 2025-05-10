@@ -10,7 +10,7 @@
             --primary: #2d3748;
             --accent: #4a5568;
             --discount: #c53030;
-            --success: #2f855a;
+            --success: #276749; /* Adjusted for better contrast */
             --highlight: #fff5f5;
         }
 
@@ -19,6 +19,22 @@
             padding: 2rem;
             background: #ffffff;
             line-height: 1.6;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            color: var(--accent);
         }
 
         .container {
@@ -36,8 +52,15 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            transition: transform 0.2s;
+            transition: transform 0.2s, opacity 0.5s, transform 0.5s;
             position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .product-card.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .product-card.special-promo {
@@ -161,7 +184,7 @@
         }
 
         .model-code {
-            color: #a0aec0;
+            color: var(--accent); /* Changed for better contrast */
             font-size: 0.75rem;
             text-align: right;
         }
@@ -200,18 +223,48 @@
             background: none;
             border: none;
         }
+
+        .modal-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 1rem;
+            cursor: pointer;
+            font-size: 1.5rem;
+            z-index: 1001;
+        }
+
+        .prev {
+            left: 1rem;
+        }
+
+        .next {
+            right: 1rem;
+        }
     </style>
 </head>
 <body>
+    <header>
+        <h1>Premium Appliance Promotions</h1>
+        <p>Discover our exclusive offers on high-end appliances</p>
+    </header>
     <div class="container" id="container"></div>
 
     <!-- Image Modal -->
     <div class="modal" id="imageModal">
-        <button class="close-btn" onclick="closeModal()">&times;</button>
+        <button class="close-btn" onclick="closeModal()">×</button>
+        <button class="modal-nav prev">←</button>
+        <button class="modal-nav next">→</button>
         <img class="modal-image" id="modalImage">
     </div>
 
     <script>
+        let currentImages = [];
+        let currentIndex = 0;
+
         function formatPrice(price) {
             return Number(price).toLocaleString('en-US');
         }
@@ -239,7 +292,22 @@
                 }));
 
                 renderProducts(products);
-                initImageModals();
+
+                // Add event listener for image clicks
+                const container = document.getElementById('container');
+                container.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('product-image')) {
+                        const productCard = e.target.closest('.product-card');
+                        const images = Array.from(productCard.querySelectorAll('.product-image')).map(img => img.src);
+                        const clickedIndex = images.indexOf(e.target.src);
+                        showModal(images, clickedIndex);
+                    }
+                });
+
+                // Add animation to product cards
+                setTimeout(() => {
+                    document.querySelectorAll('.product-card').forEach(card => card.classList.add('visible'));
+                }, 100);
             } catch (error) {
                 console.error('Error loading data:', error);
             }
@@ -306,28 +374,47 @@
             });
         }
 
-        function initImageModals() {
-            document.querySelectorAll('.image-container').forEach(container => {
-                container.addEventListener('click', (e) => {
-                    const imgSrc = e.target.src;
-                    const modal = document.getElementById('imageModal');
-                    const modalImg = document.getElementById('modalImage');
-                    modal.classList.add('modal-visible');
-                    modalImg.src = imgSrc;
-                });
-            });
+        function showModal(images, startIndex) {
+            currentImages = images;
+            currentIndex = startIndex;
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modalImg.src = currentImages[currentIndex];
+            modal.classList.add('modal-visible');
+
+            const prevBtn = modal.querySelector('.prev');
+            const nextBtn = modal.querySelector('.next');
+
+            prevBtn.onclick = () => {
+                currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+                modalImg.src = currentImages[currentIndex];
+            };
+
+            nextBtn.onclick = () => {
+                currentIndex = (currentIndex + 1) % currentImages.length;
+                modalImg.src = currentImages[currentIndex];
+            };
         }
 
         function closeModal() {
             document.getElementById('imageModal').classList.remove('modal-visible');
         }
 
-        window.onclick = function(event) {
+        // Keyboard navigation for modal
+        document.addEventListener('keydown', (e) => {
             const modal = document.getElementById('imageModal');
-            if (event.target === modal) {
-                closeModal();
+            if (modal.classList.contains('modal-visible')) {
+                if (e.key === 'ArrowLeft') {
+                    currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+                    document.getElementById('modalImage').src = currentImages[currentIndex];
+                } else if (e.key === 'ArrowRight') {
+                    currentIndex = (currentIndex + 1) % currentImages.length;
+                    document.getElementById('modalImage').src = currentImages[currentIndex];
+                } else if (e.key === 'Escape') {
+                    closeModal();
+                }
             }
-        }
+        });
 
         window.addEventListener('DOMContentLoaded', loadExcelData);
     </script>
